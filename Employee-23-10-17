@@ -128,7 +128,7 @@ mgr_id,salary+(random()*10000)::integer as Salary,
   select emp_id+100,name||'-'||emp_id as Name,dept_id,
   mgr_id,salary+(random()*10)::integer as Salary,
   (joining_date + (random()*10)::integer) ::date as joining_date,
-  (select (case when termination_date is NULL then (joining_date + (random()*10000)::integer) ::date
+  (select (case when termination_date is NULL then (joining_date + (random()*10)::integer) ::date
                when termination_date is NOT NULL then NULL
                end)
                )
