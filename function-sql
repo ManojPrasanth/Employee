@@ -59,6 +59,12 @@ last_value (e.mgr_id) over (
   from 
   employee e
   inner join employee d using(emp_id);
+  
+select name,dept_id,last_value(name) 
+over (partition by dept_id  
+   )
+from employee;
+
 
 
 SELECT
