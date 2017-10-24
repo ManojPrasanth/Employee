@@ -1,0 +1,153 @@
+//Rank()			//skips the rank cosecutive if rows are similar
+
+select t.manager_name,t.name as emp_name,t.joining_date 
+from(select m.name as manager_name,e.name,e.joining_date,
+     rank() over (partition by m.name 
+                  order by e.joining_date desc)
+     from employee e
+     inner join employee m on
+     e.mgr_id=m.emp_id 
+     group by m.name,e.name,e.joining_date)
+     t where rank=1;
+
+//Row Number()		//numbers in row wise
+select t.manager_name,t.name as emp_name,t.joining_date 
+from(select m.name as manager_name,e.name,e.joining_date,
+     row_number() over (partition by m.name 
+                  order by e.joining_date desc,e.name)
+     from employee e
+     inner join employee m on
+     e.mgr_id=m.emp_id 
+     group by m.name,e.name,e.joining_date)
+     t where row_number=1;
+
+
+//Dense_rank()     //gives consecutive ranks
+select t.manager_name,t.name as emp_name,t.joining_date 
+from(select m.name as manager_name,e.name,e.joining_date,
+     dense_rank() over (partition by m.name 
+                  order by e.joining_date desc)
+     from employee e
+     inner join employee m on
+     e.mgr_id=m.emp_id 
+     group by m.name,e.name,e.joining_date)
+     t where dense_rank=1;
+
+
+
+//First_value(column)		//prints first occuring value to the group
+select t.manager_name,t.name as emp_name,t.joining_date,t.firstnme 
+from(select m.name as manager_name,e.name,e.joining_date,
+     first_value(e.name) over (partition by m.name 
+                  order by e.joining_date desc) as firstnme
+     from employee e
+     inner join employee m on
+     e.mgr_id=m.emp_id 
+     group by m.name,e.name,e.joining_date) 
+     t;
+     
+
+//Last_value(column)		//prints last occuring value to group
+select
+e.name,e.mgr_id,e.emp_id,d.dept_id,
+last_value (e.mgr_id) over (
+  partition by d.mgr_id
+  order by
+  e.emp_id RANGE BETWEEN UNBOUNDED PRECEDING
+ AND UNBOUNDED FOLLOWING
+  ) as high
+  from 
+  employee e
+  inner join employee d using(emp_id);
+
+
+SELECT
+ product_name,
+ group_name,
+ price,
+ LAST_VALUE (price) OVER (
+ PARTITION BY group_name
+ ORDER BY
+ price RANGE BETWEEN UNBOUNDED PRECEDING
+ AND UNBOUNDED FOLLOWING
+ ) AS highest_price_per_group
+FROM
+ products
+INNER JOIN product_groups USING (group_id);
+
+
+
+//EX:
+    product_name    | group_name |  price  | highest_price_per_group
+--------------------+------------+---------+-------------------------
+ Dell Vostro        | Laptop     |  600.00 |                 1100.00
+ Sony VAIO          | Laptop     |  600.00 |                 1100.00
+ HP Elite           | Laptop     |  900.00 |                 1100.00
+ Lenovo Thinkpad    | Laptop     | 1100.00 |                 1100.00
+ Microsoft Lumia    | Smartphone |  300.00 |                  800.00
+ HTC One            | Smartphone |  400.00 |                  800.00
+ Nexus              | Smartphone |  500.00 |                  800.00
+ iPhone             | Smartphone |  800.00 |                  800.00
+ Kindle Fire        | Tablet     |  300.00 |                  800.00
+ iPad               | Tablet     |  700.00 |                  800.00
+ Samsung Galaxy Tab | Tablet     |  800.00 |                  800.00
+(11 rows)
+
+
+
+// Lag()    	//compares with previous o/p
+SELECT
+ product_name,
+ group_name,
+ price,
+ LAG (price, 1) OVER (
+ PARTITION BY group_name
+ ORDER BY
+ price
+ ) AS prev_price,
+ price - LAG (price, 1) OVER (
+ PARTITION BY group_name
+ ORDER BY
+ price
+ ) AS cur_prev_diff
+FROM
+ products
+INNER JOIN product_groups USING (group_id);
+
+
+
+//lead()		//compares with next o/p
+SELECT
+ product_name,
+ group_name,
+ price,
+ LEAD (price, 1) OVER (
+ PARTITION BY group_name
+ ORDER BY
+ price
+ ) AS next_price,
+ price - LEAD (price, 1) OVER (
+ PARTITION BY group_name
+ ORDER BY
+ price
+ ) AS cur_next_diff
+FROM
+ products
+INNER JOIN product_groups USING (group_id);
+
+
+//EX:
+  product_name    | group_name |  price  | prev_price | price_diff
+--------------------+------------+---------+------------+------------
+ Dell Vostro        | Laptop     |  600.00 |            |
+ Sony VAIO          | Laptop     |  600.00 |     600.00 |       0.00
+ HP Elite           | Laptop     |  900.00 |     600.00 |     300.00
+ Lenovo Thinkpad    | Laptop     | 1100.00 |     900.00 |     200.00
+ Microsoft Lumia    | Smartphone |  300.00 |            |
+ HTC One            | Smartphone |  400.00 |     300.00 |     100.00
+ Nexus              | Smartphone |  500.00 |     400.00 |     100.00
+ iPhone             | Smartphone |  800.00 |     500.00 |     300.00
+ Kindle Fire        | Tablet     |  300.00 |            |
+ iPad               | Tablet     |  700.00 |     300.00 |     400.00
+ Samsung Galaxy Tab | Tablet     |  800.00 |     700.00 |     100.00
+(11 rows)
