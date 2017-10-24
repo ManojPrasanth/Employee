@@ -1,0 +1,706 @@
+cal-calendar
+passwd-change pwd
+whoami-owner//who,users,w
+logout-breaks connection
+halt-Brings the system down immediately
+init 0-Powers off the system using predefined scripts to synchronize and clean up the system prior to shutting down
+init 6-Reboots the system by shutting it down completely and then restarting it
+poweroff-Shuts down the system by powering off
+reboot-Reboots the system
+shutdown-Shuts down the system
+
+--------
+file mang
+--------
+ls-listing
+ls -l->listing dir and no. of files
+ls -a->list of hidden files
+vi-creating file/editing (vi filename)
+l-key to move to the right side.
+h-key to move to the left side.
+k-key to move upside in the file.
+j-key to move downside in the file
+cat-display contents in files(cat filename)
+wc-words counting(wc filename1 filename2 filename3)
+cp-copy files(cp filename target)
+mv-move(mv filename target) and rename(mv old new)
+rm-deleting file
+
+------------
+dir mang
+----------
+cd-change directory
+pwd-current wrkng dir
+mkdir-make dir//(mkdir tmp/test-dir)-within a particular dir
+rmdir-remove dir
+mv-rename dir
+chmod-changing dir access mode(+,-,=)
+ls -l ->lists access for file(ls -l testfile)
+chown-changing ownership(sudo chown manojprasanths:manojprasanths abc)
+
+-----------
+Unix Envir
+------------
+Echo-prints a line(Echo Test)
+Variables-(PS1='=>')
+
+----------------
+Basic Utilities
+----------------
+pr-printing cmd(pr m.txt)
+lp/lpq(printer status)-print through printer device
+cancel/lprm(all)-to cancel printing 
+mail-sending mail($mail -s "Test Message" admin@yahoo.com )
+
+----------------
+Pipes & Filters
+----------------
+pipe-(|)
+grep-filter the matching pattern($ls -l | grep "Aug")
+-v Prints all lines that do not match pattern.
+-n Prints the matched line and its line number.
+-l Prints only the names of files with matching lines (letter "l")
+-c Prints only the count of matching lines.
+-i Matches either upper or lowercase.
+
+Sort-sort contents in files(-n,-r,-f)
+pg-to view page order(ls .* | pg)
+
+--------------
+process mang
+--------------
+foreground-(ls ch*.doc) doesnt wait for input
+background-(ls ch*.doc &)wait for input
+ps-lists running process
+kill-terminating process(Kill PID)
+top-shows process,cpu usage,etc
+
+-------------------
+N/w Comm Utilities
+-------------------
+ping-connection status
+
+------------
+Vi Editor
+------------
+Vi filename-new file
+Vi -R filename-opens in read only
+View filename-opens in read only
+Case Sensitive
+
+Editing Cmds---
+	i Inserts text before the current cursor location 
+I Inserts text at the beginning of the current line 
+a Inserts text after the current cursor location 
+A Inserts text at the end of the current line 
+o Creates a new line for text entry below the cursor location 
+O Creates a new line for text entry above the cursor location
+
+Deleting
+i Inserts text before the current cursor location 
+I Inserts text at the beginning of the current line 
+a Inserts text after the current cursor location 
+A Inserts text at the end of the current line 
+o Creates a new line for text entry below the cursor location 
+O Creates a new line for text entry above the cursor location
+
+Change
+cc Removes the contents of the line, leaving you in insert mode. 
+cw Changes the word the cursor is on from the cursor to the lowercase w end of the word. 
+r Replaces the character under the cursor. vi returns to the command mode after the	replacement is entered.
+ R Overwrites multiple characters beginning with the character currently under the cursor. You must use Esc to stop the overwriting. 
+s Replaces the current character with the character you type. Afterward, you are left in the insert mode.
+ S Deletes the line the cursor is on and replaces it with the new text. After the new text is entered, vi remains in the insert mode.
+
+Copy&Paste
+yy Copies the current line. 
+yw Copies the current word from the character the lowercase w cursor is on, until the end of the word.
+ p Puts the copied text after the cursor. 
+P Puts the yanked text before the cursor.
+
+Joining
+J-joins the line with nxt line
+
+Searching
+/- searches(/ pattern)
+
+Shell
+
+(#!/bin/sh)-denotes shell scripting follows
+Comments -(# Script)# denotes comment line
+Chmod +x-change to executable mode(to run in ./aa.sh format)
+Echo-prints line
+read-Reads the input from keyboard
+----------------------------
+Shell Variables
+----------------------------
+variable=variable value(NAME=”PERSON”)
+Echo $NAME
+readonly NAME-can’t change data
+unset NAME-clears value of variable
+Local,Shell,Environment?????
+
+---------------------
+Spl Variables
+---------------------
+echo "File Name: $0"---prints filename(echo "File Name: sample")
+
+$0 The filename of the current script. 
+$n prints the parameter values  $1…$9
+$# The number of arguments supplied to a script. 
+$*  like cat
+$@ like cat
+$? The exit status of the last command executed. 
+$$ PID
+$! The process number of the last background command.
+----------
+Do..done
+-----------
+
+for TOKEN in $*
+do
+ echo $TOKEN
+done
+
+------------
+Array
+-----------
+array_name[n]=value------echo ${array_name[*]} / ${array_name[@]}
+------------
+Operators
+-------------
+val=`expr 2 + 2`--------------- echo "Total value : $val"
+`expr $a + $b` 
+if...then…..else......fi------if [ $a != $b ] 
+then 
+echo "a is not equal to b" 
+fi
+(-eq,-ne,-gt,-lt,ge,-le)
+
+-----------
+Boolean
+-----------
+!-NOT
+-o-OR
+-a-AND
+
+--------------
+Sring oper
+--------------
+=,!=,-z(zero),-n(non zero),str(empty check)
+
+----------------------------
+File Test Operators
+----------------------------
+if [ -f m.txt ]; then echo "true"; else echo "false"; fi
+
+(-d(dir),-f(file),-r(readable),-w(write),-x(execute),-e(if exists),-s(size>0))
+
+
+-------------------------------
+C Shell Operators
+-------------------------------
+(-d(dir),-f(file),-r(readable),-w(write),-x(execute),-e(if exists),-s(size>0))
+
+-------------------------------
+Korn Shell Operators
+-------------------------------
+(-d(dir),-f(file),-r(readable),-w(write),-x(execute),-e(if exists),-s(size>0))
+
+---------------------
+Decision Making
+----------------------
+if...fi statement 
+if...else...fi statement  
+if...elif...else...fi statement
+
+if [ $a == $b ] 
+then 
+echo "a is equal to b" 
+elif [ $a -gt $b ] 
+then 
+echo "a is greater than b" 
+elif [ $a -lt $b ] 
+then 
+echo "a is less than b" 
+else 
+echo "None of the condition met" 
+fi
+
+----------------------------------
+case...esac Statement
+---------------------------------
+#!/bin/sh 
+FRUIT="kiwi" 
+case "$FRUIT" in 
+"apple") echo "Apple pie is quite tasty." 
+;; 
+"banana") echo "I like banana nut bread." 
+;; 
+"kiwi") echo "New Zealand is famous for kiwi." 
+;; 
+Esac
+
+--------------------
+Loops
+--------------------
+
+-----------------
+While loop
+-----------------
+while [ $a -lt 10 ] 
+do 
+echo $a 
+a=`expr $a + 1` 
+Done
+
+-----------------
+For()
+-----------------
+for var in {1..100}
+do
+ echo $var
+Done
+
+for ((number=1;number < 10;number++))
+{
+echo $number
+}
+
+------------
+Until
+------------
+a=5
+until [ ! $a -lt 10 ]
+do
+ echo $a
+ a=`expr $a + 1`
+done
+
+-------------
+Select ()
+-------------
+select DRINK in tea cofee water juice appe all none
+do
+ case $DRINK in
+ tea|cofee|water|all)
+ echo "Go to canteen"
+ ;;
+ juice|appe)
+ echo "Available at home"
+ ;;
+ none)
+ break
+ ;;
+ *) echo "ERROR: Invalid selection"
+ ;;
+ esac
+done
+
+-----------------
+Nested loop
+-----------------
+a=0;
+while [ $a -lt 10 ] 
+do
+	b=$a;
+ 	while [ $b -ge 0 ] 
+ 	do
+ 
+ 	echo -n "$b";
+ 	b=`expr $b - 1`;
+ 	done
+ echo
+ a=`expr $a + 1`
+done
+
+-----------------------
+Loop Control
+----------------------
+Infinite ()
+a=10 until [ $a -lt 10 ] do echo $a a='expr $a + 1' done
+
+Break Stmt
+a=0 while [ $a -lt 10 ] do echo $a if [ $a -eq 5 ] then break fi a=`expr $a + 1` done
+
+-------------------
+Continue Stmt
+-------------------
+NUMS="1 2 3 4 5 6 7" 
+for NUM in $NUMS 
+do 
+Q='expr $NUM % 2' 
+if [ $Q -eq 0 ] 
+then 
+echo "Number is an even number!!" 
+continue 
+fi 
+echo "Found odd number" 
+Done
+
+-------------------------
+Substitution
+------------------------
+
+(Bash substitution)-> a=10 echo -e "Value of a is $a \n"	//-e hides the \n from output, if -e is 
+								 nt  ter then \n prints along o/p
+Cmd Substitution
+USERS=`who | wc -l` echo "Logged in user are $USERS"
+
+Variable Subs
+${var}  -  print value
+${var:-word}  -  print word if var is empty or after unset
+${var:=word} -  print word and sets to var 
+${var:?message}  - Check whether var is set crctly orelse it throughs error if it is unset
+${var:+word}  -  its prints word instead of content in var , if not value in var den it display empty
+
+MetaCharacters
+* ? [ ] ' " \ $ ; & ( ) | ^ < > 
+Avoiding special handling (using ‘ ’,\,” ”,` `)
+
+=>echo "I have \$1200" -- prints I have $1200  // if echo "I have $1200" -- prints I have 200
+=>echo '<-$1500.**>; (update?) [y|n]
+=>for “ “ it avoid special char with exceptions of  ($  `  \$  \'  \"  \\)
+=>VAR=ZARA echo "$VAR owes <-\$1500.**>; [ as of (`date +%m/%d`) ]" -- o/p -- ZARA owes                                                =>									<-$1500.**>; [ as of (07/02) ]
+=>(orlese) VAR=ZARA echo '$VAR owes <-$1500.**>; [ as of (`date +%m/%d`) ]' -- o/p -- $VAR =>							owes <-$1500.**>; [ as of (`date +%m/%d`) ]
+=>DATE=`date`	 echo "Current Date: $DATE"
+
+-------------------------
+Output Redirection
+-------------------------
+$ who > users
+
+-------------------------
+Input Redirection
+-------------------------
+$ wc -l < users
+
+-----------------------
+Here Document
+----------------------
+command  <<  delimiter 
+document 
+delimiter
+Ex:	$wc -l << EOF 
+This is a simple lookup 
+program for good (and bad)
+ restaurants in Cape Town. 
+EOF 
+3
+EX:  vim "$filename" <<COMMAND
+i
+Hello12345
+^[         						// ctrl + v + esc
+ZZ
+COMMAND
+
+------------------------
+Discard the output
+-------------------------
+$ echo message 1>&2
+
+Note that the file descriptor 0 is normally standard input (STDIN), 1 is standard output (STDOUT), and 2 is standard error output (STDERR).
+
+--------------------
+Shell Functions
+---------------------
+--------------------
+Creating Func()
+--------------------
+#!/bin/sh 
+# Define your function here 
+Hello () { echo "Hello World" } 
+# Invoke your function 
+Hello
+o/p
+$./test.sh 
+Hello World 
+
+-----------------------
+Passing Parameters
+-----------------------
+# Define your function here 
+Hello () 
+{ 
+echo "Hello World $1 $2" 
+} 
+# Invoke your function 
+Hello Zara Ali
+o/p
+$./test.sh 
+Hello World Zara Ali
+
+------------------------
+Returning value
+------------------------
+# Define your function here 
+Hello () 
+{ echo "Hello World $1 $2" return 10 } 
+# Invoke your function 
+Hello Zara Ali 
+# Capture value returnd by last command 
+ret=$? 
+echo "Return value is $ret"
+
+----------------------
+Nested
+---------------------
+# Calling one function from another 
+number_one () 
+{  echo "This is the first function speaking..." 
+Number_two
+ } 
+number_two () 
+{   echo "This is now the second function speaking..."
+ }
+ # Calling function one. 
+Number_one
+
+-----------------------------------
+Function Call from Prompt
+------------------------------------
+.profile
+source ~/.profile		//Reload
+Functions can be created within “vi .profile” and can be used in diff shells anytime.But have to reload it to use it.
+
+$unset -f function_name		//to remove fun
+
+---------------------------------------
+Files and Directories
+------------------------------------
+cat- Displays File Contents
+cd- Changes Directory to dirname
+chgrp- Changes file group
+chmod- Changes permissions
+cp -Copies source file into destination
+file- Determines file type
+find -Finds files
+grep -Searches files for regular expressions
+head -Displays first few lines of a file
+ln -Creates softlink on oldname
+ls -Displays information about file type
+mkdir -Creates a new directory dirname
+more- Displays data in paginated form
+mv- Moves (Renames) an oldname to newname
+pwd -Prints current working directory
+rm- Removes (Deletes) filename
+rmdir- Deletes an existing directory provided it is empty
+tail- Prints last few lines in a file
+touch -Updates access and modification time of a file
+
+---------------------
+Manipulating Data
+---------------------
+awk- Pattern scanning and processing language
+cmp -Compares the contents of two files
+comm -Compares sorted data
+cut -Cuts out selected fields of each line of a file
+diff- Differential file comparator
+expand -Expands tabs to spaces
+join- Joins files on some common field
+perl- Data manipulation language
+sed -Stream text editor
+sort- Sorts file data
+split- Splits file into smaller files
+tr -Translates characters
+uniq -Reports repeated lines in a file
+wc- Counts words, lines, and characters
+vi- Opens vi text editor
+vim -Opens vim text editor
+fmt -Simple text formatter
+spell -Checks text for spelling error
+ispell -Checks text for spelling error
+ispell -Checks text for spelling error
+emacs GNU project Emacs
+ex, edit Line editor
+emacs GNU project Emacs
+emacs GNU project Emacs
+
+----------------
+Compress Files
+--------------------
+compress- Compresses files
+gunzip- Helps uncompress gzipped files
+gzip- GNU alternative compression method
+uncompress- Helps uncompress files
+unzip- List, test and extract compressed files in a ZIP archive
+zcat- Cat a compressed file
+zcmp- Compares compressed files
+zdiff- Compares compressed files
+zmore- File perusal filter for crt viewing of compressed text
+
+------------------
+Getting Info
+----------------
+apropos- Locates commands by keyword lookup
+info- Displays command information pages online
+man- Displays manual pages online
+whatis- Searches the whatis database for complete words
+yelp- GNOME help viewer
+
+---------------
+Network Communication
+-------------
+ftp- File transfer program
+rcp- Remote file copy
+rlogin- Remote login to a Unix host
+rsh- Remote shell
+tftp- Trivial file transfer program
+telnet- Makes terminal connection to another host
+ssh- Secures shell terminal or command connection
+scp- Secures shell remote file copy
+sftp- Secures shell file transfer program
+
+--------------------
+Messages between Users
+---------------------
+evolution- GUI mail handling tool on Linux
+mail- Simple send or read mail program
+mesg- Permits or denies messages
+parcel- Sends files to another user
+pine- Vdu-based mail utility
+talk- Talks to another user
+write- Writes message to another user\
+
+------------------
+Programming Utilities
+------------------
+dbx- Sun debugger
+gdb- GNU debugger
+make- Maintains program groups and compile programs
+nm- Prints program's name list
+size- Prints program's sizes
+strip- Removes symbol table and relocation bits
+cb- C program beautifier
+cc- ANSI C compiler for Suns SPARC systems
+ctrace- C program debugger
+gcc- GNU ANSI C Compiler
+indent- Indent and format C program source
+bc- Interactive arithmetic language processor
+gcl- GNU Common Lisp
+perl- General purpose language
+php- Web page embedded language
+py- Python language interpreter
+asp- Web page embedded language
+CC- C++ compiler for Suns SPARC systems
+g++- GNU C++ Compiler
+javac- JAVA compiler
+appletvieweir- JAVA applet viewer
+netbeans- Java integrated development environment on Linux
+sqlplus- Runs the Oracle SQL interpreter
+sqlldr -Runs the Oracle SQL data loader
+mysql- Runs the mysql SQL interpreter
+
+---------------
+Misc Commands
+----------------
+chfn -Changes your finger information
+chgrp- Changes the group ownership of a file
+chown- Changes owner
+date- Prints the date
+determin- Automatically finds terminal type
+du- Prints amount of disk usage
+echo- Echo arguments to the standard options
+exit- Quits the system
+finger- Prints information about logged-in users
+groupadd- Creates a user group
+Show group memberships
+homequota- Shows quota and file usage
+iostat- Reports I/O statistics
+kill- Sends a signal to a process
+last -Shows last logins of users
+logout -Logs off Unix
+lun -Lists user names or login ID
+netstat- Shows network status
+passwd -Changes user password
+passwd -Changes your login password
+printenv- Displays value of a shell variable
+ps -Displays the status of current processes
+ps- Prints process status statistics
+quota -v --Displays disk usage and limits
+reset- Resets terminal mode
+script -Keeps script of terminal session
+script- Saves the output of a command or process
+setenv -Sets environment variables
+stty -Sets terminal options
+time- Helps time a command
+top- Displays all system processes
+tset- Sets terminal mode
+tty -Prints current terminal name
+umask -Show the permissions that are given to view files by default
+uname- Displays name of the current system
+uptime- Gets the system up time
+useradd -Creates a user account
+users- Prints names of logged in users
+vmstat- Reports virtual memory statistics
+w -Shows what logged in users are doing
+who- Lists logged in users
+
+Advanced Unix
+Deleting All Lines with sed
+$ sed -e 'd' /etc/passwd		//d-all(or)2d-for 2nd line
+$ cat /etc/passwd | sed 'd'
+
+Substitution
+sed  "s/lx'/hello1/" m.txt
+sed ‘s/hello/welcome/’ m.txt		
+g- Replaces all matches, not just the first match    //sed ‘s/hello/welcome/g’ m.txt
+NUMBER- Replaces only NUMBERth match
+p- If substitution was made, then prints the pattern space
+w FILENAME- If substitution was made, then writes result to FILENAME 
+=>						 //cat m.txt | sed 's/bb/111/w abce.txt'
+I or i- Matches in a case-insensitive manner
+M or m-In addition to the normal behavior of the special regular expression characters ^ and $, this flag causes ^ to match the empty string after a newline and $ to match the empty string before a newline
+
+ cat m.txt | sed '3s/B/a/g'	// 3rd row replacing B with a for all occurences
+$ cat /etc/passwd | sed 's/root//g'  	//replacing with empty spaces
+$ cat /etc/passwd | sed 's:/root:/amrood:g'		//alternative str separator
+$ cat testing | sed -n '/root/p' 		//prints matching patterns
+$ cat m.txt | sed -n '/^bb$/d' 		//regular expression
+
+^-  Matches the beginning of lines
+$-  Matches the end of lines
+.-   Matches any single character
+*-  Matches zero or more occurrences of the previous character
+
+Matching Characters
+/a.c/- Matches lines that contain strings such as a+c, a-c, abc, match, and a3c
+=>						cat m.txt | sed 's/v.d/add/'
+/a*c/- Matches the same strings along with strings such as ace, yacc, and arctic
+/[tT]he/- Matches the string The and the
+/^$/- Matches blank lines		//cat m.txt | sed 's/[a-z]/-------/'
+/^.*$/- Matches an entire line whatever it is
+/ */- Matches one or more spaces
+/^$/- Matches blank lines
+[a-z]- Matches a single lowercase letter
+[A-Z]- Matches a single uppercase letter
+[a-zA-Z]- Matches a single letter
+[0-9]- Matches a single number
+[a-zA-Z0-9]- Matches a single letter or number
+$ cat m.txt | sed 's:dk/jv:---==:g'		//wen special char is in word
+
+Character Class Keywords
+$ cat m.txt | sed 's/[[:alnum:]]/-----/'		//for replacing alpha/num which 1st comes in line
+
+[[:alnum:]]- Alphanumeric [a-z A-Z 0-9]
+[[:alpha:]]- Alphabetic [a-z A-Z]
+[[:blank:]]- Blank characters (spaces or tabs)
+[[:cntrl:]]- Control characters
+[[:digit:]]- Numbers [0-9]
+[[:graph:]]- Any visible characters (excludes whitespace)
+[[:lower:]]- Lowercase letters [a-z]
+[[:print:]]- Printable characters (non-control characters)
+[[:punct:]]- Punctuation characters
+[[:space:]]- Whitespace
+[[:upper:]]- Uppercase letters [A-Z]
+[[:xdigit:]]- Hex digits [0-9 a-f A-F]
+
+$ sed -e 's/^[[:digit:]][[:digit:]][[:digit:]]/(&)/g' phone.txt    //input->5555551212 o/p->(555)5551212
+
+Multiple cmds
+sed -e 's/^[[:digit:]]\{3\}/(&)/g' \ -e 's/)[[:digit:]]\{3\}/&-/g' phone.txt	//o/p->(555)555-12121212
+sed -e 's/^[[:digit:]]\{3\}/(&)/g' \ -e 's/[[:digit:]]\{3\}/&-/g' phone.txt	//o/p->(555)555-121-212-12
+
+cat phone.txt | sed 's/\(.*)\)\(.*-\)\(.*$\)/Area \code: \1 Second: \2 Third: \3/'   
+//o/p->Area code: (555) Second: 555- Third: 1212
+
