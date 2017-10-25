@@ -769,3 +769,5 @@ groupdel-Removes groups from the system
 
 
 
+( cat check1.txt | tr ' ' '\n' | grep -v '^$' | sort | uniq -c | sort -rn        //to get repeatd values with its count  )
+
