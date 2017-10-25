@@ -701,6 +701,71 @@ Multiple cmds
 sed -e 's/^[[:digit:]]\{3\}/(&)/g' \ -e 's/)[[:digit:]]\{3\}/&-/g' phone.txt	//o/p->(555)555-12121212
 sed -e 's/^[[:digit:]]\{3\}/(&)/g' \ -e 's/[[:digit:]]\{3\}/&-/g' phone.txt	//o/p->(555)555-121-212-12
 
+Back References
 cat phone.txt | sed 's/\(.*)\)\(.*-\)\(.*$\)/Area \code: \1 Second: \2 Third: \3/'   
 //o/p->Area code: (555) Second: 555- Third: 1212
+
+
+----------------------------------------
+Unix — File System Basics
+-------------------------------------
+Navigating the File System
+cat filename--Displays a filename
+cd dirname--Moves you to the identified directory
+cp file1 file2--Copies one file/directory to the specified location
+file filename--Identifies the file type (binary, text, etc)
+find filename dir--Finds a file/directory
+head filename--Shows the beginning of a file
+less filename-- Browses through a file from the end or the beginning
+ls dirname--Shows the contents of the directory specified
+mkdir dirname-- Creates the specified directory
+more filename-- Browses through a file from the beginning to the end
+mv file1 file2--Moves the location of, or renames a file/directory
+pwd--Shows the current directory the user is in
+rm filename--Removes a file
+rmdir dirname--Removes a directory
+tail filename--Shows the end of a file
+touch filename--Creates a blank file or modifies an existing file or its attributes
+whereis filename--Shows the location of a file
+which filename--Shows the location of a file if it is in your PATH
+
+The df Command
+The command df -k (disk free) displays the disk space usage in kilobytes
+$df -k
+
+The du Command
+The du (disk usage) command enables you to specify directories to show disk space
+usage on a particular directory
+$du -h /etc
+
+Mounting the File System
+A file system must be mounted in order to be usable by the system. To see what is
+currently mounted (available for use) on your system
+$ mount
+For example, if you want to mount a CD-ROM to the directory /mnt/cdrom, you can
+type −
+$ mount -t iso9660 /dev/cdrom /mnt/cdrom
+Unmounting the File System
+To unmount (remove) the file system from your system, use the umount command by identifying the mount point or device. For example, to unmount cdrom, use the following command −
+$ umount /dev/cdrom
+-----------------------------------
+Unix — User Administration
+-------------------------------------
+Managing Users and Groups
+/etc/passwd: Keeps the user account and password information. This file holds
+  		the majority of information about accounts on the Unix system.
+/etc/shadow: Holds the encrypted password of the corresponding account. Not
+all the systems support this file.
+/etc/group: This file contains the group information for each account.
+/etc/gshadow: This file contains secure group account information.
+
+
+useradd-Adds accounts to the system		//sudo useradd mano
+usermod-Modifies account attributes
+userdel-Deletes accounts from the system
+groupadd-Adds groups to the system
+groupmod-Modifies group attributes
+groupdel-Removes groups from the system
+
+
 
