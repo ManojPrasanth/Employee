@@ -1,0 +1,25 @@
+create table table1 (Letter char);
+   
+   insert into table1(letter) values('A'),
+   ('A'),('A'),('B'),('B');
+   
+     create table table2 (Letter char);
+   
+   insert into table2(letter) values('A'),
+   ('A'),('B');
+   
+   
+   select t1.letter,t2.letter from
+(select letter,row_number() over (partition by letter) as row1
+from table1) t1 left join
+(select letter, row_number() over (partition by letter) as row2
+from table2) t2 on t1.row1=t2.row2 and t1.letter=t2.letter 
+order by 1;
+
+output:
+letter	letter
+A	        A
+A	        A
+A	      (null)
+B       	B
+B	      (null)
