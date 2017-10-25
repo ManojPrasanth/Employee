@@ -771,3 +771,4 @@ groupdel-Removes groups from the system
 
 ( cat check1.txt | tr ' ' '\n' | grep -v '^$' | sort | uniq -c | sort -rn        //to get repeatd values with its count  )
 
+(awk '{for(w=1;w<=NF;w++) print $w}' m.txt | sort | uniq -c | sort -n		//to get repeatd values with its count)
