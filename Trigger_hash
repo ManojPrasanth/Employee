@@ -1,0 +1,26 @@
+create table s3_patents(id int primary key,
+                        country_code char varying,
+                        stripped_patnum char varying,
+                        document_type char varying,
+                        s3_hash char varying,
+                        created_by char varying default current_user,
+                        created_at timestamp without time zone default now(),
+                        updated_by char varying default current_user,
+                        updated_at timestamp without time zone default now()
+                        );
+                        
+                        
+create or replace function f1() returns trigger as
+$_$
+
+begin
+
+new.s3_hash=encode(concat(new.country_code,new.stripped_patnum)::bytea,'base64');
+return new;
+end;
+$_$
+LANGUAGE PLPGSQL;
+
+create trigger t1 before insert or update on s3_patents
+for each row 
+execute procedure f1();
