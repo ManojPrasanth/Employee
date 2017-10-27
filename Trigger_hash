@@ -45,3 +45,14 @@ create trigger s3_hash_trigger before insert or update on pat_docs.s3_patents
 for each row 
 execute procedure pat_docs.patent_s3_hash_trig_fn();                             
 
+
+---------------------------------------------------------------
+create schema pat_docs;
+ create role pat_docs;
+ grant usage on schema pat_docs to pat_docs;
+ grant all on schema pat_docs to pat_docs;
+ (
+grant usage on schema pat_docs to postgres;
+grant all on schema pat_docs to postgres; 
+grant pat_docs to postgres;
+)
