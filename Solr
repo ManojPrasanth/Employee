@@ -1,0 +1,304 @@
+SOLR
+http://lucene.apache.org/solr/guide/7_0/solr-tutorial.html#launch-solr-in-solrcloud-mode
+
+Unpack Solr
+
+~$ ls solr*
+solr-7.0.0.zip
+
+~$ unzip -q solr-7.0.0.zip
+
+~$ cd solr-7.0.0/
+Launch Solr in SolrCloud Mode
+To launch Solr, run: bin/solr start -e cloud on Unix or MacOS; bin\solr.cmd start -e cloud on Windows.
+This will start an interactive session that will start two Solr "servers" on your machine. This command has an option to run without prompting you for input (-noprompt), but we want to modify two of the defaults so we won’t use that option now.
+solr-7.0.0:$ ./bin/solr start -e cloud
+
+Welcome to the SolrCloud example!
+
+This interactive session will help you launch a SolrCloud cluster on your local workstation.
+To begin, how many Solr nodes would you like to run in your local cluster? (specify 1-4 nodes) [2]:
+The first prompt asks how many nodes we want to run. Note the [2] at the end of the last line; that is the default number of nodes. Two is what we want for this example, so you can simply press enter.
+Ok, let's start up 2 Solr nodes for your example SolrCloud cluster.
+Please enter the port for node1 [8983]:
+This will be the port that the first node runs on. Unless you know you have something else running on port 8983 on your machine, accept this default option also by pressing enter. If something is already using that port, you will be asked to choose another port.
+Please enter the port for node2 [7574]:
+This is the port the second node will run on. Again, unless you know you have something else running on port 8983 on your machine, accept this default option also by pressing enter. If something is already using that port, you will be asked to choose another port.
+Solr will now initialize itself and start running on those two nodes. The script will print the commands it uses for your reference.
+Starting up 2 Solr nodes for your example SolrCloud cluster.
+
+Creating Solr home directory /solr-7.0.0/example/cloud/node1/solr
+Cloning /solr-7.0.0/example/cloud/node1 into
+   /solr-7.0.0/example/cloud/node2
+
+Starting up Solr on port 8983 using command:
+"bin/solr" start -cloud -p 8983 -s "example/cloud/node1/solr"
+
+Waiting up to 180 seconds to see Solr running on port 8983 [\]
+Started Solr server on port 8983 (pid=34942). Happy searching!
+
+
+Starting up Solr on port 7574 using command:
+"bin/solr" start -cloud -p 7574 -s "example/cloud/node2/solr" -z localhost:9983
+
+Waiting up to 180 seconds to see Solr running on port 7574 [\]
+Started Solr server on port 7574 (pid=35036). Happy searching!
+
+INFO  - 2017-07-27 12:28:02.835; org.apache.solr.client.solrj.impl.ZkClientClusterStateProvider; Cluster at localhost:9983 ready
+Notice that two instances of Solr have started on two nodes. Because we are starting in SolrCloud mode, and did not define any details about an external ZooKeeper cluster, Solr launches its own ZooKeeper and connects both nodes to it.
+After startup is complete, you’ll be prompted to create a collection to use for indexing data.
+Now let's create a new collection for indexing documents in your 2-node cluster.
+Please provide a name for your new collection: [gettingstarted]
+Here’s the first place where we’ll deviate from the default options. This tutorial will ask you to index some sample data included with Solr, called the "techproducts" data. Let’s name our collection "techproducts" so it’s easy to differentiate from other collections we’ll create later. Enter techproducts at the prompt and hit enter.
+How many shards would you like to split techproducts into? [2]
+This is asking how many shards you want to split your index into across the two nodes. Choosing "2" (the default) means we will split the index relatively evenly across both nodes, which is a good way to start. Accept the default by hitting enter.
+How many replicas per shard would you like to create? [2]
+A replica is a copy of the index that’s used for failover (see also the Solr Glossary definition). Again, the default of "2" is fine to start with here also, so accept the default by hitting enter.
+Please choose a configuration for the techproducts collection, available options are:
+_default or sample_techproducts_configs [_default]
+We’ve reached another point where we will deviate from the default option. Solr has two sample sets of configuration files (called a configSet) available out-of-the-box.
+A collection must have a configSet, which at a minimum includes the two main configuration files for Solr: the schema file (named either managed-schema or schema.xml), and solrconfig.xml. The question here is which configSet you would like to start with. The _default is a bare-bones option, but note there’s one whose name includes "techproducts", the same as we named our collection. This configSet is specifically designed to support the sample data we want to use, so enter sample_techproducts_configs at the prompt and hit enter.
+At this point, Solr will create the collection and again output to the screen the commands it issues.
+Uploading /solr-7.0.0/server/solr/configsets/_default/conf for config techproducts to ZooKeeper at localhost:9983
+
+Connecting to ZooKeeper at localhost:9983 ...
+INFO  - 2017-07-27 12:48:59.289; org.apache.solr.client.solrj.impl.ZkClientClusterStateProvider; Cluster at localhost:9983 ready
+Uploading /solr-7.0.0/server/solr/configsets/sample_techproducts_configs/conf for config techproducts to ZooKeeper at localhost:9983
+
+Creating new collection 'techproducts' using command:
+http://localhost:8983/solr/admin/collections?action=CREATE&name=techproducts&numShards=2&replicationFactor=2&maxShardsPerNode=2&collection.configName=techproducts
+
+{
+  "responseHeader":{
+    "status":0,
+    "QTime":5460},
+  "success":{
+    "192.168.0.110:7574_solr":{
+      "responseHeader":{
+        "status":0,
+        "QTime":4056},
+      "core":"techproducts_shard1_replica_n1"},
+    "192.168.0.110:8983_solr":{
+      "responseHeader":{
+        "status":0,
+        "QTime":4056},
+      "core":"techproducts_shard2_replica_n2"}}}
+
+Enabling auto soft-commits with maxTime 3 secs using the Config API
+
+POSTing request to Config API: http://localhost:8983/solr/techproducts/config
+{"set-property":{"updateHandler.autoSoftCommit.maxTime":"3000"}}
+Successfully set-property updateHandler.autoSoftCommit.maxTime to 3000
+
+SolrCloud example running, please visit: http://localhost:8983/solr
+Index the Techproducts Data
+The data we will index is in the example/exampledocs directory. The documents are in a mix of document formats (JSON, CSV, etc.), and fortunately we can index them all at once:
+Linux/Mac
+solr-7.0.0:$ bin/post -c techproducts example/exampledocs/*
+You should see output similar to the following:
+SimplePostTool version 5.0.0
+Posting files to [base] url http://localhost:8983/solr/techproducts/update...
+Entering auto mode. File endings considered are xml,json,jsonl,csv,pdf,doc,docx,ppt,pptx,xls,xlsx,odt,odp,ods,ott,otp,ots,rtf,htm,html,txt,log
+POSTing file books.csv (text/csv) to [base]
+POSTing file books.json (application/json) to [base]/json/docs
+POSTing file gb18030-example.xml (application/xml) to [base]
+POSTing file hd.xml (application/xml) to [base]
+POSTing file ipod_other.xml (application/xml) to [base]
+POSTing file ipod_video.xml (application/xml) to [base]
+POSTing file manufacturers.xml (application/xml) to [base]
+POSTing file mem.xml (application/xml) to [base]
+POSTing file money.xml (application/xml) to [base]
+POSTing file monitor.xml (application/xml) to [base]
+POSTing file monitor2.xml (application/xml) to [base]
+POSTing file more_books.jsonl (application/json) to [base]/json/docs
+POSTing file mp500.xml (application/xml) to [base]
+POSTing file post.jar (application/octet-stream) to [base]/extract
+POSTing file sample.html (text/html) to [base]/extract
+POSTing file sd500.xml (application/xml) to [base]
+POSTing file solr-word.pdf (application/pdf) to [base]/extract
+POSTing file solr.xml (application/xml) to [base]
+POSTing file test_utf8.sh (application/octet-stream) to [base]/extract
+POSTing file utf8-example.xml (application/xml) to [base]
+POSTing file vidcard.xml (application/xml) to [base]
+21 files indexed.
+COMMITting Solr index changes to http://localhost:8983/solr/techproducts/update...
+Time spent: 0:00:00.822
+Congratulations again! You have data in your Solr!
+
+Basic Searching
+To use curl, give the same URL shown in your browser in quotes on the command line:
+curl "http://localhost:8983/solr/techproducts/select?indent=on&q=*:*"
+Search for a Single Term
+If you prefer curl, enter something like this:
+curl "http://localhost:8983/solr/techproducts/select?q=foundation"
+Put "id" (without quotes) in the "fl" box and hit Execute Query again. Or, to specify it with curl:
+curl "http://localhost:8983/solr/techproducts/select?q=foundation&fl=id"
+Field Searches
+curl "http://localhost:8983/solr/techproducts/select?q=cat:electronics"
+ Phrase Search
+curl "http://localhost:8983/solr/techproducts/select?q=\"CAS+latency\""
+Combining Searches
+To find documents that contain both terms "electronics" and "music", enter +electronics +music in the q box in the Admin UI Query tab.
+curl "http://localhost:8983/solr/techproducts/select?q=%2Belectronics%20%2Bmusic"
+To search for documents that contain the term "electronics" but don’t contain the term "music", enter +electronics -music in the q box in the Admin UI. For curl, again, URL encode + as %2B as in:
+curl "http://localhost:8983/solr/techproducts/select?q=%2Belectronics+-music"
+Exercise 1 Wrap Up
+You can delete your installation and start over, or you can use the bin/solr script we started out with to delete this collection:
+bin/solr delete -c techproducts
+And then create a new collection:
+bin/solr create -c <yourCollection> -s 2 -rf 2
+To stop both of the Solr nodes we started, issue the command:
+bin/solr stop -all
+
+Restart Solr
+If you did, though, and need to restart Solr, issue these commands:
+./bin/solr start -c -p 8983 -s example/cloud/node1/solr
+This starts the first node. When it’s done start the second node, and tell it how to connect to to ZooKeeper:
+./bin/solr start -c -p 7574 -s example/cloud/node2/solr -z localhost:9983
+
+Create a New Collection
+The data you’re going to index is related to movies, so start by creating a collection named "films" that uses the _default configSet:
+bin/solr create -c films -s 2 -rf 2
+Create the "names" Field
+curl -X POST -H 'Content-type:application/json' --data-binary '{"add-field": {"name":"name", "type":"text_general", "multiValued":false, "stored":true}}' http://localhost:8983/solr/films/schema
+Create a "catchall" Copy Field
+curl -X POST -H 'Content-type:application/json' --data-binary '{"add-copy-field" : {"source":"*","dest":"_text_"}}' http://localhost:8983/solr/films/schema
+
+Index Sample Film Data
+To Index JSON Format
+bin/post -c films example/films/films.json
+
+C:\solr-7.0.0> java -jar -Dc=films -Dauto example\exampledocs\post.jar example\films\*.json
+To Index XML Format
+bin/post -c films example/films/films.xml
+
+C:\solr-7.0.0> java -jar -Dc=films -Dauto example\exampledocs\post.jar example\films\*.xml
+To Index CSV Format
+bin/post -c films example/films/films.csv -params "f.genre.split=true&f.directed_by.split=true&f.genre.separator=|&f.directed_by.separator=|"
+
+C:\solr-7.0.0> java -jar -Dc=films -Dparams=f.genre.split=true&f.directed_by.split=true&f.genre.separator=|&f.directed_by.separator=| -Dauto example\exampledocs\post.jar example\films\*.csv
+Each command includes these main parameters:
+-c films: this is the Solr collection to index data to.
+example/films/films.json (or films.xml or films.csv): this is the path to the data file to index. You could simply supply the directory where this file resides, but since you know the format you want to index, specifying the exact file for that format is more efficient.
+Faceting
+One of Solr’s most popular features is faceting. Faceting allows the search results to be arranged into subsets (or buckets, or categories), providing a count for each subset. There are several types of faceting: field values, numeric and date ranges, pivots (decision tree), and arbitrary query faceting.
+
+To see facet counts from all documents (q=*:*): turn on faceting (facet=true), and specify the field to facet on via the facet.field param. If you only want facets, and no document contents, specify rows=0. The curl command below will return facet counts for the genre_str field:
+curl "http://localhost:8983/solr/films/select?q=*:*&rows=0&facet=true&facet.field=genre_str"
+
+In your terminal, you’ll see something like:
+{
+  "responseHeader":{
+    "zkConnected":true,
+    "status":0,
+    "QTime":11,
+    "params":{
+      "q":"*:*",
+      "facet.field":"genre_str",
+      "rows":"0",
+      "facet":"true"}},
+  "response":{"numFound":1100,"start":0,"maxScore":1.0,"docs":[]
+  },
+  "facet_counts":{
+    "facet_queries":{},
+    "facet_fields":{
+      "genre_str":[
+        "Drama",552,
+        "Comedy",389,
+        "Romance Film",270,
+        "Thriller",259,
+        "Action Film",196,
+        "Crime Fiction",170,
+        "World cinema",167]},
+        "facet_ranges":{},
+        "facet_intervals":{},
+        "facet_heatmaps":{}}}
+
+If you wanted to control the number of items in a bucket, you could do something like this:
+curl "http://localhost:8983/solr/films/select?=&q=*:*&facet.field=genre_str&facet.mincount=200&facet=on&rows=0"
+
+Range Facets
+For numerics or dates, it’s often desirable to partition the facet counts into ranges rather than discrete values. A prime example of numeric range faceting, using the example techproducts data from our previous exercise, is price. In the /browse UI, it looks like this:
+
+curl 'http://localhost:8983/solr/films/select?q=*&rows=0&facet=true&facet.range=initial_release_date&facet.range.start=NOW-20YEAR&facet.range.end=NOW&facet.range.gap=%2B1YEAR';
+In the terminal you will see:
+{
+  "responseHeader":{
+    "zkConnected":true,
+    "status":0,
+    "QTime":8,
+    "params":{
+      "facet.range":"initial_release_date",
+      "facet.limit":"300",
+      "q":"*:*",
+      "facet.range.gap":"+1YEAR",
+      "rows":"0",
+      "facet":"on",
+      "facet.range.start":"NOW-20YEAR",
+      "facet.range.end":"NOW"}},
+  "response":{"numFound":1100,"start":0,"maxScore":1.0,"docs":[]
+  },
+  "facet_counts":{
+    "facet_queries":{},
+    "facet_fields":{},
+    "facet_ranges":{
+      "initial_release_date":{
+        "counts":[
+          "1997-07-28T17:12:06.919Z",0,
+          "1998-07-28T17:12:06.919Z",0,
+          "1999-07-28T17:12:06.919Z",48,
+          "2000-07-28T17:12:06.919Z",82,
+          "2001-07-28T17:12:06.919Z",103,
+          "2002-07-28T17:12:06.919Z",131,
+          "2003-07-28T17:12:06.919Z",137,
+          "2004-07-28T17:12:06.919Z",163,
+          "2005-07-28T17:12:06.919Z",189,
+          "2006-07-28T17:12:06.919Z",92,
+          "2007-07-28T17:12:06.919Z",26,
+          "2008-07-28T17:12:06.919Z",7,
+          "2009-07-28T17:12:06.919Z",3,
+          "2010-07-28T17:12:06.919Z",0,
+          "2011-07-28T17:12:06.919Z",0,
+          "2012-07-28T17:12:06.919Z",1,
+          "2013-07-28T17:12:06.919Z",1,
+          "2014-07-28T17:12:06.919Z",1,
+          "2015-07-28T17:12:06.919Z",0,
+          "2016-07-28T17:12:06.919Z",0],
+        "gap":"+1YEAR",
+        "start":"1997-07-28T17:12:06.919Z",
+        "end":"2017-07-28T17:12:06.919Z"}},
+    "facet_intervals":{},
+    "facet_heatmaps":{}}}
+
+
+Pivot Facets
+Another faceting type is pivot facets, also known as "decision trees", allowing two or more fields to be nested for all the various possible combinations. Using the films data, pivot facets can be used to see how many of the films in the "Drama" category (the genre_str field) are directed by a director. Here’s how to get at the raw data for this scenario:
+curl "http://localhost:8983/solr/films/select?q=*:*&rows=0&facet=on&facet.pivot=genre_str,directed_by_str"
+
+Delete
+ We can clean up our work by deleting the collection. To do that, issue this command at the command line:
+bin/solr delete -c films
+
+Create Your Own Collection
+Before you get started, create a new collection, named whatever you’d like. In this example, the collection will be named "localDocs"; replace that name with whatever name you choose if you want to.
+
+./bin/solr create -c localDocs -s 2 -rf 2
+
+Again, as we saw from Exercise 2 above, this will use the _default configSet and all the schemaless features it provides. As we noted previously, this may cause problems when we index our data. You may need to iterate on indexing a few times before you get the schema right.
+Indexing Ideas
+Local Files with bin/post
+./bin/post -c localDocs ~/Documents
+
+Updating Data
+You may notice that even if you index content in this tutorial more than once, it does not duplicate the results found. This is because the example Solr schema (a file named either managed-schema or schema.xml) specifies a uniqueKey field called id. Whenever you POST commands to Solr to add a document with the same value for the uniqueKey as an existing document, it automatically replaces it for you.
+
+
+Deleting Data
+Execute the following command to delete a specific document:
+bin/post -c localDocs -d "<delete><id>SP2514N</id></delete>"
+To delete all documents, you can use "delete-by-query" command like:
+bin/post -c localDocs -d "<delete><query>*:*</query></delete>"
+
+Cleanup
+The following command line will stop Solr and remove the directories for each of the two nodes that were created all the way back
+bin/solr stop -all ; rm -Rf example/cloud/
