@@ -342,6 +342,9 @@ bin/solr stop -all ; rm -Rf example/cloud/		//RESET TO STARTING POINT
 bin/solr status
 bin/solr create -c <name>        //Create a Core
 select row_to_json (testing) from (select * from employee limit 5) testing;      //converting to json for indexing 
+SELECT query_to_xml('SELECT * FROM users', true, false, ''); 		               //to xml 
+SELECT table_to_xml('users', true, false, '');					                     //to xml 
 bin/post -c sample /home/manojprasanths/Documents/Emp.json     //for adding to the collection
+
 -----------------------------------------------------------------------------------------------------------------
 
