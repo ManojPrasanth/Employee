@@ -1,0 +1,28 @@
+select emp_id,name from employee where emp_id not in
+(select m.mgr_id from employee e inner join
+employee m on e.emp_id=m.mgr_id);                                         
+
+select emp_id,name from employee where emp_id not in 
+(select coalesce(mgr_id,0)from employee);                         //coalesce give output of values not null.
+                                                                  //if its null then null is replaced by 0 as given argu
+
+select coalesce(mgr_id,dept_id,0)from employee                    //if mgr_id=null then replace with dept_id, if dept_id=null then replace with 0
+
+
+select emp_id,name from employee e
+where not exists(
+  select mgr_id from employee m
+  where e.emp_id=m.mgr_id
+  )
+
+select l.emp_id,l.name from employee l left join
+employee r on l.emp_id=r.mgr_id 
+where r.mgr_id is null
+
+select * from employee where emp_id not in 
+(select mgr_id from employee where mgr_id is not null);           //if not null where cond is not given then output doesnt print if any value if there s null value in that field
+                                                                  
+                                                                  
+select nullif(mgr_id,emp_id)from employee                         //nullif(arg1,arg2) is opp. to coalesce , nullif() gives o/p of null values orelse argu 1 
+
+
