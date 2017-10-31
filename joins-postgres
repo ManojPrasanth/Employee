@@ -26,3 +26,8 @@ select * from employee where emp_id not in
 select nullif(mgr_id,emp_id)from employee                         //nullif(arg1,arg2) is opp. to coalesce , nullif() gives o/p of null values orelse argu 1 
 
 
+select * from employee e
+where not(emp_id = any 
+(select mgr_id
+ from employee where mgr_id is not null
+));
