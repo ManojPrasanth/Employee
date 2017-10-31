@@ -1,0 +1,537 @@
+Postgres
+
+PostgreSQL is a general purpose and object-relational database management system, the most advanced open source database system.
+PostgreSQL was developed based on POSTGRES 4.2 at Berkeley Computer Science department, University of California.
+PostgreSQL was designed to run on UNIX-like platforms. However, PostgreSQL was then also designed to be portable so that it could run on various platforms such as Mac OS X, Solaris, and Windows.
+PostgreSQL requires very minimum maintained efforts because of its stability
+
+PostgreSQL has many advanced features that other enterprise database management systems offer, such as:
+User-defined types
+Table inheritance
+Sophisticated locking mechanism
+Foreign key referential integrity
+Views, rules, subquery
+Nested transactions (savepoints)
+Multi-version concurrency control (MVCC)
+Asynchronous replication
+
+PostgreSQL is the first database management system that implements multi-version concurrency control (MVCC) feature, even before Oracle
+PostgreSQL is a general-purpose object-relational database management system. It allows you to add custom functions developed using different programming languages such as C/C++, Java, etc.
+
+PostgreSQL is designed to be extensible. In PostgreSQL, you can define your own data types, index types, functional languages, etc. If you don’t like any part of the system, you can always develop a custom plugin to enhance it to meet your requirements e.g., adding a new optimizer.
+
+SELECT:
+
+The SELECT statement is one of the most complex statements in PostgreSQL. It has many clauses that you can combine to form a powerful query.
+Select distinct rows by using DISTINCT operator.
+Filter rows by using WHERE clause.
+Sort rows by using ORDER BY clause.
+Select rows based on various operators such as BETWEEN, INand LIKE.
+Group rows into groups using GROUP BY clause
+Apply conditions for groups using HAVING clause.
+Join a table to other tables using INNER JOIN, LEFT JOIN, FULL OUTER JOIN, CROSS JOIN clauses.
+
+Introduction to PostgreSQL SELECT DISTINCT clause
+
+The DISTINCT clause is used in the SELECT statement to remove duplicate rows from the result set. The DISTINCT clause keeps one row for each group of duplicates. The DISTINCT clause  can be used on one or more columns of a table.
+
+SELECT
+ DISTINCT column_1,
+ column_2
+FROM
+ tbl_name;
+
+ SELECT
+ DISTINCT ON
+ (column_1) (column_to_be_displayed),
+ column_2
+FROM
+ tbl_name;
+
+PostgreSQL WHERE Clause
+
+The WHERE clause appears right after the FROM clause of the SELECT statement.  The conditions are used to filter the rows returned from the SELECT statement. PostgreSQL provides you with various standard operators  to construct the conditions.
+
+Operator	Description
+=			Equal
+>			Greater than
+<			Less than
+>=			Greater than or equal
+<=			Less than or equal
+<> or !=	Not equal
+AND			Logical operator AND
+OR			Logical operator OR
+
+SELECT column_1, column_2 … column_n
+FROM table_name
+WHERE conditions;
+
+Introduction to PostgreSQL ORDER BY clause
+
+When you query data from a table, PostgreSQL returns the rows in the order that they were inserted into the table. 
+In order to sort the result set, you use the ORDER BY clause in the SELECT statement
+
+Notice that the SQL standard only allows you to sort rows based on the columns that appear in the SELECTclause. 
+However, PostgreSQL allows you to sort rows based on the columns that even does not appear in the selection list.
+
+SELECT
+ column_1,
+ column_2
+FROM
+ tbl_name
+ORDER BY
+ column_1 ASC,
+ column_2 DESC;
+
+ Introduction to the PostgreSQL BETWEEN operator
+
+ You use the BETWEEN operator to match a value against a range of values
+
+ value BETWEEN low AND high;			//similar to (value >= low and value <= high)
+ value NOT BETWEEN low AND high;		//similar to (value < low OR value > high)
+
+ SELECT
+ customer_id,
+ payment_id,
+ amount
+FROM
+ payment
+WHERE
+ amount BETWEEN 8
+AND 9;
+
+SELECT
+ customer_id,
+ payment_id,
+ amount
+FROM
+ payment
+WHERE
+ amount NOT BETWEEN 8
+AND 9;
+
+
+PostgreSQL IN operator 
+
+You use the IN operator in the WHERE clause to check if a value matches any value in a list of values. 
+
+value IN (value1,value2,...)				//value IN (SELECT value FROM tbl_name);
+
+SELECT
+ customer_id,
+ rental_id,
+ return_date
+FROM
+ rental
+WHERE
+ customer_id IN (1, 2)
+ORDER BY
+ return_date DESC;
+
+ SELECT
+ first_name,
+ last_name
+FROM
+ customer
+WHERE
+ customer_id IN (
+ SELECT
+ customer_id
+ FROM
+ rental
+ WHERE
+ CAST (return_date AS DATE) = '2005-05-27'			//CAST or :: means typecasting to date from timestamp(return_date)
+ );
+
+Introduction to PostgreSQL LIKE operator
+
+-LIKE 								//case sensitive
+-NOT LIKE
+-ILIKE								//case-insensitively
+-NOT ILIKE
+
+PostgreSQL also provides some operators that act like the LIKE, NOT LIKE, ILIKE and NOT ILIKE operator as shown below:
+
+~~ 		is equivalent to LIKE
+~~* 	is equivalent to ILIKE
+!~~ 	is equivalent to NOT LIKE
+!~~* 	is equivalent to NOT ILIKE
+
+
+SELECT
+ first_name,
+        last_name
+FROM
+ customer
+WHERE
+ first_name LIKE 'Jen%';
+
+
+ Notice that the WHERE clause contains a special expression: the first_name, the LIKE operator and a string that contains a percent (%) character, which is referred as a pattern.
+
+The query returns rows whose values in the first name column begin with Jenand may be followed by any sequence of characters. This technique is called pattern matching.
+
+You construct a pattern by combining a string with wildcard characters and use the LIKE or NOT LIKE operator to find the matches. PostgreSQL provides two wildcard characters:
+
+Percent ( %)  		for matching any sequence of characters.
+Underscore ( _)  	for matching any single character.
+
+SELECT
+ first_name,
+ last_name
+FROM
+ customer
+WHERE
+ first_name NOT LIKE 'Jen%';
+
+ PostgreSQL provides the ILIKE operator that acts like the LIKE operator. In addition, the ILIKE operator matches value case-insensitively
+
+Introduction to PostgreSQL GROUP BY clause
+
+The GROUP BY clause divides the rows returned from the SELECT statement into groups. For each group, you can apply an aggregate function e.g., SUM to calculate the sum of items or COUNT to get the number of items in the groups.
+
+SELECT
+ customer_id
+FROM
+ payment
+GROUP BY
+ customer_id;
+
+SELECT
+ customer_id,
+ SUM (amount)
+FROM
+ payment
+GROUP BY
+ customer_id;
+
+ Introduction to PostgreSQL HAVING clause
+
+We often use the HAVINGclause in conjunction with the GROUP BY clause to filter group rows that do not satisfy a specified condition.
+
+The HAVINGclause sets the condition for group rows created by the GROUP BY clause after the GROUP BY clause applies while the WHERE clause sets the condition for individual rows before GROUP BY clause applies. This is the main difference between the HAVINGand WHEREclauses.
+
+In PostgreSQL, you can use the HAVINGclause without the GROUP BY clause. In this case, the HAVINGclause will turn the query into a single group. In addition, the SELECTlist and HAVINGclause can only refer to columns from within aggregate functions. This kind of query returns a single row if the condition in the HAVINGclause is true or zero row if it is false.
+
+
+select count(salary),joining_date 
+from employee
+group by joining_date 
+having count(salary)>1 
+order by joining_date desc;
+
+
+Introduction to PostgreSQL INNER JOIN clause
+
+For each row in the A table, PostgreSQL scans the B table to check if there is any row that matches the condition i.e., A.pka = B.fka. If it finds a match, it combines columns of both rows into one row and add the combined row to the returned result set.
+ometimes, A and B tables have the same column name so we have to refer to the column as table_name.column_name to avoid ambiguity. In case the name of the table is long, you can use a table alias e.g., tbland refer to the column as tbl.column_name.
+
+SELECT
+ customer.customer_id,
+ customer.first_name customer_first_name,
+ customer.email,
+ staff.first_name staff_first_name,
+ amount,
+ payment_date
+FROM
+ customer
+INNER JOIN payment ON payment.customer_id = customer.customer_id
+INNER JOIN staff ON payment.staff_id = staff.staff_id;
+
+Introduction to PostgreSQL LEFT JOIN clause
+
+The LEFT JOIN clause returns all rows in the left table ( A) that are combined with rows in the right table ( B) even though there is no corresponding rows in the right table ( B).
+The LEFT JOIN is also referred as LEFT OUTER JOIN.
+
+SELECT
+ film.film_id,
+ film.title,
+ inventory_id
+FROM
+ film
+LEFT JOIN inventory ON inventory.film_id = film.film_id;
+
+
+Introduction to the PostgreSQL CROSS JOIN clause
+
+A CROSS JOIN clause allows you to produce the Cartesian Product of rows in two or more tables. Different from the other JOIN operators such as LEFT JOIN  or INNER JOIN, the CROSS JOIN does not have any matching condition in the join clause.
+Suppose we have to perform the CROSS JOIN of two tables T1 and T2. For every row from T1 and T2 i.e., a cartesian product, the result set will contain a row that consists of all columns in the T1 table followed by all columns in the T2 table. If T1 has N rows, T2 has M rows, the result set will have N x M rows.
+
+SELECT * 
+FROM T1
+CROSS JOIN T2;
+
+SELECT * 
+FROM T1, T2;							// same as cross join
+
+SELECT *
+FROM T1
+INNER JOIN T2 ON TRUE;					//same as cross join
+
+output:
+
+label	score
+A		a
+A		b
+A		c
+B		a
+B		b
+B		c
+
+
+
+
+Introduction to the PostgreSQL FULL OUTER JOIN clause
+
+select * 
+from employee e 
+full outer join 
+employee d 
+on e.emp_id=d.emp_id ;
+
+In outer join is similar to cross join but requires condition for executing
+
+output:
+label		score
+A			(null)
+B			(null)
+(null)		a
+(null)		c
+(null)		b
+
+
+PostgreSQL NATURAL JOIN
+
+A natural join is a join that creates an implicit join based on the same column names in the joined tables. 
+A natural join can be an inner join, left join, or right join. If you do not specify a join explicitly e.g., INNER JOIN, LEFT JOIN, RIGHT JOIN, PostgreSQL will use the INNER JOIN by default.
+If you use the asterisk (*) in the select list, the result will contain the following columns:
+All the common columns, which are the columns in the both tables that have the same name
+Every column in the first and second tables that is not a common column
+The convenience of the NATURAL JOIN is that it does not require you to specify the join clause because it uses an implicit join clause based on the common column.
+However, you should avoid using the NATURAL JOIN whenever possible because sometimes it may cause an unexpected result.
+
+
+SELECT *
+FROM T1
+NATURAL [INNER, LEFT, RIGHT] JOIN T2;
+
+SELECT
+ *
+FROM
+ products
+NATURAL JOIN categories;
+
+(SELECT
+ *
+FROM
+ products
+INNER JOIN categories USING (category_id);)				//if inner join is not mentioned we can use naturaljoin
+
+
+Introduction to PostgreSQL LIMIT clause
+
+PostgreSQL LIMIT is an optional clause of the SELECT statement that gets a subset of rows returned by a query.
+The statement returns n rows generated by the query. If n is zero , zero rows print (or) if NULL, the query returns the same result set as omitting the LIMIT clause.
+
+SELECT
+ *
+FROM
+ table_name
+LIMIT n;
+
+In case you want to skip a number of rows before returning the n rows, you use OFFSET clause placed after the LIMIT clause
+LIMIT and OFFSET clause works alone with select statement.
+The statement first skips m rows before returning n rows generated by the query. If m is zero, the statement will work like without the OFFSET clause.
+
+SELECT
+ *
+FROM
+ table
+LIMIT n OFFSET m;
+
+
+Introduction to PostgreSQL UNION operator
+
+The UNION operator combines result sets of two or more SELECT statements into a single result set. 
+Both queries must return the same number of columns.
+The corresponding columns in the queries must have compatible data types.
+The UNION operator removes all duplicate rows unless the UNION ALL is used.
+The UNION operator may place the rows in the first query before, after or between the rows in the result set of the second query. To sort the rows in the combined result set by a specified column, you use the ORDER BY clause.
+We often use the UNION operator to combine data from similar tables that are not perfectly normalized. Those tables are often found in the reporting or data warehouse system.
+
+select * from employee where mgr_id =1
+union all
+select * from employee where mgr_id in (1,2) order by emp_id;							//prints duplicates also
+
+select emp_id,name,mgr_id  from employee where mgr_id =1
+union    
+select emp_id,name,mgr_id from employee where mgr_id in (1,2) order by emp_id;			//prints unique data
+
+
+ emp_id |  name   | mgr_id 
+--------+---------+--------
+      3 | Aneesh  |      1
+      4 | Manish  |      2
+      5 | Krishna |      1
+      6 | Mani    |      2
+      7 | Tamil   |      1
+      8 | Mano    |      2
+      9 | Vishnu  |      1
+     10 | Anish   |      2
+     11 | Siva    |      1
+     12 | Krish   |      2
+     13 | Swamy   |      1
+
+
+
+Introduction to PostgreSQL INTERSECT operator
+
+Like the UNION and EXCEPT operators, the PostgreSQL INTERSECT operator combines the result sets of two or more SELECT statements into a single result set. The INTERSECT operator returns all rows in the both result sets.
+To use the INTERSECT operator, the columns that appear in the SELECT statements must follow the rules below:
+	The number of columns and their order in the SELECT clauses must the be the same.
+	The data types of the columns must be compatible.
+
+
+select emp_id,name,mgr_id  from employee where mgr_id =1
+intersect
+select emp_id,name,mgr_id from employee where mgr_id in (1,2) order by emp_id;
+
+
+ emp_id |  name   | mgr_id 
+--------+---------+--------
+      3 | Aneesh  |      1
+      5 | Krishna |      1
+      7 | Tamil   |      1
+      9 | Vishnu  |      1
+     11 | Siva    |      1
+     13 | Swamy   |      1
+
+
+Introduction to the PostgreSQL EXCEPT operator
+
+Like the UNION and INTERSECT operators, the EXCEPT operator returns rows by comparing the result sets of two or more quires.
+The EXCEPT operator returns distinct rows from the first (left) query that are not in the output of the second (right) query.
+To combine the queries using the EXCEPT operator, you must obey the following rules:
+	The number of columns and their orders must be the same in the two queries.
+	The data types of the respective columns must be compatible.
+
+select emp_id,name,mgr_id  from employee where mgr_id in (1,2)
+except
+select emp_id,name,mgr_id from employee where mgr_id =2 order by emp_id;
+
+
+ emp_id |  name   | mgr_id 
+--------+---------+--------
+      3 | Aneesh  |      1
+      5 | Krishna |      1
+      7 | Tamil   |      1
+      9 | Vishnu  |      1
+     11 | Siva    |      1
+     13 | Swamy   |      1
+
+
+Introduction to PostgreSQL subquery
+
+A subquery is a query nested inside another query such as SELECT, INSERT, DELETE and UPDATE.
+The query inside the brackets is called a subquery or an inner query. The query that contains the subquery is known as an outer query.
+PostgreSQL executes the query that contains a subquery in the following sequence:
+	First, executes the subquery.
+	Second, gets the result and passes it to the outer query.
+	Third, executes the outer query.
+
+select * from employee where salary > (select avg(salary) from employee);
+
+emp_id |  name  | dept_id | mgr_id | salary | joining_date | termination_date 
+--------+--------+---------+--------+--------+--------------+------------------
+      1 | Harish |         |        |  90000 | 1990-12-17   | 2015-12-17
+      2 | Hari   |         |        |  80000 | 1991-02-17   | 
+      8 | Mano   |     101 |      2 |  45000 | 2001-10-13   | 
+     10 | Anish  |     103 |      2 |  55000 | 2001-03-15   | 
+     11 | Siva   |     104 |      1 |  70000 | 2003-03-15   | 
+
+
+PostgreSQL subquery with IN operator
+
+A subquery can return zero or more rows. To use this subquery, you use the IN operator in the WHERE clause.
+
+select * from employee where emp_id in (select mgr_id from employee) limit 5;
+
+emp_id |  name   | dept_id | mgr_id | salary | joining_date | termination_date 
+--------+---------+---------+--------+--------+--------------+------------------
+      1 | Harish  |         |        |  90000 | 1990-12-17   | 2015-12-17
+      2 | Hari    |         |        |  80000 | 1991-02-17   | 
+      3 | Aneesh  |     101 |      1 |  18000 | 1996-10-10   | 
+      4 | Manish  |     102 |      2 |  25000 | 1997-11-12   | 
+      5 | Krishna |     103 |      1 |  35000 | 1998-12-17   | 
+
+
+PostgreSQL subquery with EXISTS operator
+
+A subquery can be an input of the EXISTS operator. If the subquery returns any row, the EXISTS operator returns true. If the subquery returns no row, the result of EXISTS operator is false.
+The EXISTS operator only cares about the number of rows returned from the subquery, not the content of the rows
+EXISTS is often used with the correlated subquery.
+
+select * from employee e
+where exists 
+(select 1
+ from employee d
+ where d.mgr_id=e.emp_id);
+
+ emp_id |  name   | dept_id | mgr_id | salary | joining_date | termination_date 
+--------+---------+---------+--------+--------+--------------+------------------
+      1 | Harish  |         |        |  90000 | 1990-12-17   | 2015-12-17
+      2 | Hari    |         |        |  80000 | 1991-02-17   | 
+      3 | Aneesh  |     101 |      1 |  18000 | 1996-10-10   | 
+      4 | Manish  |     102 |      2 |  25000 | 1997-11-12   | 
+      5 | Krishna |     103 |      1 |  35000 | 1998-12-17   | 
+
+
+The query works like an inner join on the column. However, it returns at most one row for each row in the table even though there are some corresponding rows in the another table
+
+NOT EXISTS
+
+NOT EXISTS is opposite to EXISTS, meaning that if the subquery returns no row, NOT EXISTS returns true. If the subquery returns any rows, NOT EXISTS returns false.
+
+emp_id |     name      | dept_id | mgr_id | salary | joining_date | termination_date 
+--------+---------------+---------+--------+--------+--------------+------------------
+     14 | Aarav         |     102 |      3 |  13000 | 2006-06-15   | 2015-12-17
+     15 | Prasanth      |     103 |      4 |  12000 | 2007-07-17   | 2015-12-17
+     16 | Prakasam      |     104 |      5 |  11000 | 2008-08-18   | 
+     17 | Pranith       |     105 |      6 |  10000 | 2009-09-19   | 
+     18 | Harinarayanan |     101 |      7 |  16000 | 2010-10-20   | 
+
+
+EXISTS and NULL
+
+If the subquery returns NULL, EXISTS returns true
+
+select * from employee 
+where exists 
+(select null);										//output prints all rows since subquery is true
+													//the subquery returned NULL, therefore, the query returned all rows from the customer table.
+
+Introduction to PostgreSQL ANY operator
+
+The PostgreSQL ANY operator compares a value to a set of values returned by a subquery. 
+
+expresion operator ANY(subquery)
+
+In this syntax:
+	The subquery must return exactly one column.
+	The ANY operator must be preceded by one of the following operator =, <=, >, <, >, <>
+	The ANY operator returns true if any value of the subquery meets the condition, otherwise, it returns false.
+Note that SOME is a synonym for ANY, meaning that you can substitute SOME for ANY in any SQL statement.
+
+SELECT
+    title
+FROM
+    film
+WHERE
+    film_id <> ANY(
+        SELECT
+            film_id
+        FROM
+            inventory
+    )
+ORDER BY title;
+
