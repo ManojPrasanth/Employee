@@ -1,0 +1,21 @@
+
+echo `awk -F ',' '{print $1 ","}' check.txt| tr -d '\n' | sed -e 's/,$/}/g'|sed -e 's/^/{/';awk -F ',' '{print $2 ","}' check.txt| tr -d '\n' | sed -e 's/,$/}/g'|sed -e 's/^/{/'`
+
+
+
+awk -F"," '{ for (i = 1; i <= NF; i++) f[i] = f[i] "," $i ;
+       if (NF > n) n = NF }
+ END { for (i = 1; i <= n; i++) sub(/^, */,"", f[i]) ;
+       for (i = 1; i <= n; i++) print f[i] }
+    ' check.txt |awk '{print "{"$0"}"}'
+
+
+
+for (( i=1; i<=rowcount; i++ )); do     awk -v i="$i" -F , '{printf("%s,",$i)}' check.txt;     echo; done|awk '{print "{"$0""}' |sed 's/.$/}/'
+
+
+awk -F ',' -v q="'" -v l="{" -v r="}" '{col1=col1$1","; col2=col2$2",";} END {gsub(",$","",col1);gsub(",$","",col2);print q l col1 r q"," q l col2 r q;}' check.txt
+
+echo `cat abc.txt | awk -F',' '{print $1,","}'| tr -d "\n" | sed -e 's/,$/}/g' | sed -e 's/^/{/'; cat abc.txt | awk -F',' '{print $2,","}'| tr -d "\n" | sed -e 's/,$/}/g' | sed -e 's/^/{/'`;
+
+
