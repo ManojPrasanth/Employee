@@ -1,0 +1,107 @@
+//Installation of Ne04j
+
+//Add the repository
+
+The Debian package is available from http://debian.neo4j.org. To use the repository follow these steps:
+
+wget -O - https://debian.neo4j.org/neotechnology.gpg.key | sudo apt-key add -
+echo 'deb http://debian.neo4j.org/repo stable/' | sudo tee -a /etc/apt/sources.list.d/neo4j.list
+sudo apt-get update
+
+//Installing
+
+//To install Neo4j Community Edition:
+
+sudo apt-get install neo4j=3.3.0
+
+//To install Neo4j Enterprise Edition:
+
+sudo apt-get install neo4j-enterprise=3.3.0
+
+-------------------------------------------------------------------------------------------------------------
+//To copy output of postgres to Neo4j
+COPY (SELECT * FROM customers) TO '/tmp/customers.csv' WITH CSV header;
+
+//To load employee csv
+USING PERIODIC COMMIT
+LOAD CSV WITH HEADERS FROM "file:///employee.csv" AS row
+CREATE` (:Employee {EmpID: row.emp_id,EmpName: row.name,DeptID: row.dept_id,MgrID: row.mgr_id,Salary: row.salary,Joining: row.joining_date,Termination: row.termination_date });
+
+//To load dept
+USING PERIODIC COMMIT
+LOAD CSV WITH HEADERS FROM "file:///dept.csv" AS row
+CREATE (:Department {DeptID: row.dept_id,DeptName: row.name});
+
+//To relate employee and dept
+USING PERIODIC COMMIT
+LOAD CSV WITH HEADERS FROM "file:///employee.csv" AS row
+MATCH (emp:Employee {DeptID: row.dept_id})
+MATCH (dept:Department {DeptID: row.dept_id})
+MERGE (emp)-[:belongs]->(dept);
+
+USING PERIODIC COMMIT
+LOAD CSV WITH HEADERS FROM "file:///employee.csv" AS row
+MATCH (employee:Employee {EmpID: row.emp_id})
+MATCH (manager:Employee {EmpID: row.mgr_id})
+MERGE (employee)-[:REPORTS_TO]->(manager);
+
+---------------------------------------------------------------------------------------------------------
+//CREATE:
+
+//Single node:
+create (ex:first {id:1}) return ex;
+
+//Creating relationship btw nodes:
+match (ex:first{id:1})
+create (ex)-[rel:one]->(ex1:sec{name:"example"})
+return ex,rel,ex1;
+
+//For creating relationship for multiple nodes
+MATCH (ex1:sec {name:"example"})
+FOREACH (name in ["Johan","Rajesh","Anna","Julia","Andrew"] |
+  CREATE (ex1)-[:FRIEND]->(:sec{name:name}))
+  return ex1;
+
+//To find data:
+MATCH (you {name:"You"})-[:FRIEND]->(yourFriends)
+RETURN you, yourFriends
+
+//To relate to different existing nodes:
+match (a:Person{name:"Julia"})
+match (b:Database{name:"Neo4j"})
+Create (a)-[rel:works]->(b)
+return a;
+
+//To find the shortest path
+MATCH (a:Person {name:"Andrew"})
+MATCH (sec)-[:check]->(b:sec {name:"example"})
+MATCH path = shortestPath( (a)-[:FRIEND*..4]-(sec) )
+RETURN b,sec,path
+
+//To delete single node
+MATCH (n:Useless)
+DELETE n
+
+//To delete all nodes with relationship
+MATCH (n)
+DETACH DELETE n
+
+//To delete a node with all its relationship
+MATCH (n { name: 'Andres' })
+DETACH DELETE n
+
+//To delete relationships only
+MATCH (n { name: 'Andres' })-[r:KNOWS]->()
+DELETE r
+
+//To find single condition
+MATCH (p:Product)
+WHERE p.productName = "Chocolade"
+RETURN p.productName, p.unitPrice;
+//(or)
+MATCH (p:Product {productName:"Chocolade"})
+RETURN p.productName, p.unitPrice;
+
+//Indexing
+//If you want to match quickly by this node-label and attribute combination, it makes sense to create an index for that pair.
+CREATE INDEX ON :Product(productName);
