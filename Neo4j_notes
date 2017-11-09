@@ -105,3 +105,17 @@ RETURN p.productName, p.unitPrice;
 //Indexing
 //If you want to match quickly by this node-label and attribute combination, it makes sense to create an index for that pair.
 CREATE INDEX ON :Product(productName);
+
+----------------------------------------------------------------------------------------------------------
+//To install plugins
+
+Add these 3 lines in neo4j_config file:
+dbms.unmanaged_extension_classes=com.graphaware.server=/graphaware
+com.graphaware.runtime.enabled=true
+com.graphaware.module.NLP.2=com.graphaware.nlp.module.NLPBootstrapper
+
+//Download these jar files and put it in plugins dir --(/var/lib/neo4j/plugins):
+graphaware-nlp-3.3.0.51.1.jar 
+graphaware-server-community-all-3.3.0.51.jar  
+nlp-opennlp-3.3.0.51.1.jar 
+
