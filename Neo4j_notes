@@ -124,3 +124,15 @@ Match(n:AnnotatedText)
 Match(a:NER_Person)
 CALL ga.nlp.ml.similarity.cosine([n,a],0,n.text,'')
 YIELD result return result,a.value
+
+//TF IDF
+match(e:Sentence)
+WITH COUNT(e) AS numberOfDocuments
+match (p:Tag)<-[r:HAS_TAG]-(e)
+WITH numberOfDocuments, p, count(r) AS termFrequency
+MATCH (p)<-[:HAS_TAG]->(e)
+WITH p, COUNT(e) AS numberOfDocumentsWithTerm, numberOfDocuments, termFrequency
+WITH p, numberOfDocumentsWithTerm,  log10(numberOfDocuments / numberOfDocumentsWithTerm) AS inverseDocumentFrequency, termFrequency, numberOfDocuments
+RETURN p.value, termFrequency, numberOfDocumentsWithTerm, inverseDocumentFrequency, termFrequency * inverseDocumentFrequency AS score
+ORDER BY score DESC
+LIMIT 10
