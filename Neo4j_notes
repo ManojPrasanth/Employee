@@ -119,3 +119,8 @@ graphaware-nlp-3.3.0.51.1.jar
 graphaware-server-community-all-3.3.0.51.jar  
 nlp-opennlp-3.3.0.51.1.jar 
 
+//Similarity cosine
+Match(n:AnnotatedText)
+Match(a:NER_Person)
+CALL ga.nlp.ml.similarity.cosine([n,a],0,n.text,'')
+YIELD result return result,a.value
