@@ -348,3 +348,18 @@ bin/post -c sample /home/manojprasanths/Documents/Emp.json     //for adding to t
 
 -----------------------------------------------------------------------------------------------------------------
 
+fq:emp_id:[95 TO *]
+
+//delete
+ curl http://localhost:8983/solr/employee/update --data '<commit/>' -H 'Content-type:text/xml; charset=utf-8'
+
+ curl http://localhost:8983/solr/employee/update --data '<delete><query>*:*</query></delete>' -H 'Content-type:text/xml; charset=utf-8'
+
+ with x as(select d.name,c.emp_id from employee c 
+left join employee d on d.emp_id=c.mgr_id 
+where d.name is not null)
+update employee
+set mgr_name = x.name from x where x.emp_id = 
+employee.emp_id and employee.emp_id is not null;
+
+http://localhost:8983/solr/employee/select?facet.query=min(emp_id)&facet=on&q=*:*&stats=true&stats.field=mgr_id
