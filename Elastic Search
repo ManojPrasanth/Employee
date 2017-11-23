@@ -267,3 +267,150 @@ GET /library/_analyze
   "filter": ["lowercase","unique "], 
   "text": "Red color White Color"
 }
+
+---------------------------------
+GET /library/_analyze
+{
+  "tokenizer": "standard",
+   "filter": ["lowercase"],
+  "text": "red color! cost.price $5.95 @ 15%"
+}
+
+---------------------------
+
+GET /library/_analyze
+{
+  "tokenizer": "letter",
+   "filter": ["lowercase"],
+  "text": "red color! cost.price $5.95 @ 15%"
+}
+------------------------------
+GET /library/_analyze
+{
+  "tokenizer": "standard",
+  "text": "abcd.mail@gmail.com website: https://www.gmail.com"
+}
+-----------------------------------
+GET /library/_analyze
+{
+  "tokenizer": "uax_url_email",
+  "text": "abcd.mail@gmail.com website: https://www.gmail.com"
+}
+--------------------------------
+GET /library/_search
+{
+  "size": 0
+  , "aggs": {
+    "popular": {
+      "terms": {
+        "field": "colors.keyword"
+      }
+    }
+  }
+}
+
+---------------------------------
+GET /library/books/_search
+{
+  "query": {
+    "match": {
+      "description": "once"
+    }
+  },
+   "aggs": {
+    "popular": {
+      "terms": {
+        "field": "colors.keyword"
+      }
+    }
+  }
+}
+-------------------------------
+GET /library/_search
+{
+  "size": 0
+  , "aggs": {
+    "price": {
+      "stats": {
+        "field": "price"
+      }
+    },
+    "popular":{
+      "terms": {
+        "field": "colors.keyword"
+        
+      },
+      "aggs": {
+        "avg_price_color": {
+          "avg": {
+            "field": "price"
+          }
+        }
+      }
+    }
+  }
+}
+
+-------------------------------
+POST /library/books/1/_update
+{
+  "doc": {
+    "title":"Harry Potter"
+    
+  }
+}
+---------------------------
+GET /library/books/4
+----------------------------
+GET /library/_mapping
+-------------------------------
+PUT /famous-librarians
+{
+  "settings": {
+    "index": {
+      "number_of_shards":2,
+      "number_of_replicas":0,
+      "analysis":{
+        "analyzer":{
+          "my-desc-analyzer": {
+            "type": "custom",
+            "tokenizer": "uax_url_email",
+            "filter": ["lowercase"]
+          }
+        }
+      }
+    }
+  },
+  "mappings": {
+    "librarian": {
+      "properties": {
+        "name": {
+          "type": "text"
+        },
+        "favorite-color": {
+          "type": "keyword"
+      },
+      "birth-date": {
+        "type": "date",
+        "format": "year_month_day"
+      },
+      "hometown": {
+        "type": "geo_point"
+      },
+      "description": {
+        "type": "text",
+        "analyzer": "my-desc-analyzer"
+      }
+    }
+  }
+}
+}
+------------------------------------------
+POST /famous-librarians/librarian/_bulk
+{ "index": { "_id":1}}
+{ "name": "Harry potter", "birth-date": "2000-01-01", "favorite-color": ["red","green","blue"], "hometown": { "lat": 32.349722, "lon": -87.641111}, "description": "Movie Outward appearance. Throughout the series, Harry is described as having his father's perpetually untidy black hair, his mother's bright green eyes, and a lightning bolt-shaped scar on his forehead. ... www.gmail.com or abcd.mail@gmail.com once Rowling has also stated that Harry inherited his parents good looks."}
+{ "index": { "_id":2}}
+{ "name": "Half Girlfriend","birth-date": "2000-01-05" ,"favorite-color": ["red","white","blue"],"hometown": { "lat": 33.349722, "lon": -86.641111}, "description": "Movie Chetan Bhagat commented,'Half-Girlfriend, to me, is a unique Indian phenomenon, where boys and girls are not clear about their relationship status with each other. Once A boy may think he is more than friends with the girl, but the girl is still not his girlfriend.... Because, in India, that is what most men get.'"}
+
+GET /famous-librarians/librarian/_search
+---------------------------------------------------
