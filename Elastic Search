@@ -6,6 +6,15 @@ and many other languages.[2] Elasticsearch is the most popular enterprise search
 
 Elasticsearch is developed alongside a data-collection and log-parsing engine called Logstash, and an analytics and visualisation platform called Kibana. The three products are designed
 for use as an integrated solution, referred to as the "Elastic Stack" (formerly the "ELK stack").
+POST /library/books/_search
+{
+   "query" : {
+      "term" : { "description" : "movie" }
+   },
+   "sort" : [
+      {"price" : {"order" : "desc"}}
+   ]
+}
 
 Logstash:
 Logstash is a tool for managing events and logs. When used generically the term encompases a larger system of log collection, processing, storage and searching activities.
@@ -15,7 +24,16 @@ Finally logstash routes events to output plugins which can forward the events to
 
 KIBANA:
  KIBANA is an open source data visualization plugin for Elasticsearch. It provides visualization capabilities on top of the content indexed on an Elasticsearch cluster. 
- Users can create bar, line and scatter plots, or pie charts and maps on top of large volumes of data.[3]
+ Users can crPOST /library/books/_search
+{
+   "query" : {
+      "term" : { "description" : "movie" }
+   },
+   "sort" : [
+      {"price" : {"order" : "desc"}}
+   ]
+}
+eate bar, line and scatter plots, or pie charts and maps on top of large volumes of data.[3]
  The combination of Elasticsearch, Logstash, and Kibana (also known as ELK stack or Elastic stack) is available as products or service.[4] 
  Logstash provides an input stream to Elastic for storage and search, and Kibana accesses the data for visualizations such as dashboards.[5]
 
