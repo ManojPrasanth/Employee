@@ -414,3 +414,14 @@ POST /famous-librarians/librarian/_bulk
 
 GET /famous-librarians/librarian/_search
 ---------------------------------------------------
+POST /library/books/_search
+{
+   "query" : {
+      "term" : { "description" : "movie" }
+   },
+   "sort" : [
+      {"price" : {"order" : "desc"}}
+   ]
+}
+------------------------------------------
+
