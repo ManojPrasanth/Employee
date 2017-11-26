@@ -535,3 +535,60 @@ WHERE
     )
 ORDER BY title;
 
+---------------
+PostgreSQL INSERT 
+	PostgreSQL provides the INSERT statement that allows you to insert one or more rows into a table at a time.
+
+syntax:
+INSERT INTO table (column1, column2, …)
+VALUES
+ (value1, value2, …),
+ (value1, value2, …) ,...;
+
+INSERT INTO table(value1,value2,...)
+SELECT column1,column2,...
+FROM another_table
+WHERE condition;
+
+Alter:	
+ALTER TABLE link ADD COLUMN last_update DATE;
+ 
+ALTER TABLE link ALTER COLUMN last_update
+SET DEFAULT CURRENT_DATE;
+
+PostgreSQL UPDATE 
+	To change the values of the columns in a table, you use the UPDATE statement
+	
+syntax
+UPDATE table
+SET column1 = value1,
+    column2 = value2 ,...
+WHERE
+ condition;
+ 
+ Ex:1
+ UPDATE link_tmp
+SET rel = link.rel,
+ description = link.description,
+ last_update = link.last_update
+FROM
+ link
+WHERE
+ link_tmp.id = link.id;
+ 
+ Ex:2
+ with x as(
+ select d.name,c.emp_id 
+ from employee c 
+ left join 
+ employee d on d.emp_id=c.mgr_id 
+ where d.name is not null) 
+ update employee 
+ set mgr_name = x.name 
+ from x 
+ where x.emp_id = employee.emp_id 
+ and employee.emp_id is not null;
+ 
+ 
+ 
+ 
