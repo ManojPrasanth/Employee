@@ -1,0 +1,99 @@
+Explain-postgres
+
+link: http://www.dalibo.org/_media/understanding_explain.pdf
+
+create table foo (c1 integer, c2 text);
+
+insert into foo select i, md5(random()::text) from generate_series(1, 1000000) as i;
+-------------------------------------------
+
+explain select * from foo;
+­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­
+ Seq Scan on foo  (cost=0.00..18584.82
+                   rows=1025082 width=36)
+• Cost
+• cost to get the first row: 0.00
+• cost to get all rows: 18584.82
+• in “page cost” unit
+• Rows
+• number of rows
+• Width
+• average width of a row
+• in bytes
+------------------------------------------
+analyze foo;
+
+it is used to analyze the table and results the correct no. of rows.
+
+What does ANALYZE do?
+
+• It reads some random rows of the table
+• 300*default_statistics_target
+• It computes some statistics of the values in each column of the table
+• Number of most common values, and histogram
+• depends on default_statistics_target
+• may be customized for each column
+• And it stores the column statistics in the pg_statistic catalog
+• Try the pg_stats view
+• easier to read
+• and lots of quite interesting informations
+-----------------------------------------------
+select sum(avg_width) as width from pg_stats where tablename='foo';
+ width 
+-------
+    37
+(1 row)
+
+• Average size (in bytes) of a row in the resulting data set
+• The lesser, the better
+-------------------------------------------------
+select reltuples from pg_class where relname='foo';
+ reltuples 
+-----------
+     1e+06
+(1 row)
+
+• All relations metadata appear in the pg_class catalog
+• Many interesting informations
+• reltuples
+• relpages
+• relallvisible
+
+The number of rows is easier to get. The pg_class system catalog is a catalog of all relations
+(tables, indexes, sequences, etc) in the database. This catalog holds metadatas about the
+relations. It also holds some statistical informations, such as the 
+• estimated number of rows(column reltuples), 
+• the estimated number of file pages (relpages), and 
+• the number of pages containing only visibles rows for all the current transactions (relallvisible).
+----------------------------------------------------------
+select relpages*current_setting('seq_page_cost')::float4 + reltuples*current_setting('cpu_tuple_cost')::float4 as total_cost from pg_class where relname='foo';
+ total_cost 
+------------
+      18334
+(1 row)
+
+select reltuples*current_setting('cpu_tuple_cost')::float4 as total_cost from pg_class where relname='foo';			//current_setting('cpu_tuple_cost')::float4=0.01
+ total_cost 
+------------
+      10000					//(total rows/100)
+(1 row)
+
+select relpages*current_setting('seq_page_cost')::float4 as total_cost from pg_class where relname='foo';			//current_setting('seq_page_cost')::float4 as total_cost=1
+ total_cost 
+------------
+       8334					//(estimated number of file pages (relpages))
+(1 row)
+
+---------------------------------------------------------------
+explain (analyze) select * from foo;
+
+ Seq Scan on foo  (cost=0.00..18334.00 rows=1000000 width=37) (actual time=0.020..81.148 rows=1000000 loops=1)
+ Planning time: 0.060 ms
+ Execution time: 116.536 ms
+(3 rows)
+
+• 3 new informations
+• real execution time in milliseconds
+• real number of lines
+• and number of loops
+• Be careful, it really executes the query!
