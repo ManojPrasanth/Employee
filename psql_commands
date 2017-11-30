@@ -2,7 +2,7 @@
 psql
 -------
 
-\timing 			// to show the execution time of a query after execution or to hide execution time(by default off).
+\timing 		      	// to show the execution time of a query after execution or to hide execution time(by default off).
 
 \d 					// to list tables in the database. 
 
