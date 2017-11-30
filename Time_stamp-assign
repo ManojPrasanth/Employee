@@ -1,0 +1,128 @@
+SELECT series.minute as interval,
+	  to_timestamp(ceil((extract('epoch' from series.minute) / 3600 )) * 3600) AT TIME ZONE 'UTC' +('1 hour')::interval
+	 as interval_alias ,coalesce(t.count,0) as count from
+	  (
+	select count(*)
+ count,
+	to_timestamp(floor((extract('epoch' from time_stamp) / 3600 )) * 3600)
+	AT TIME ZONE 'UTC' as interval_alias
+	FROM test
+	group by interval_alias
+	) t
+	 LEFT JOIN 
+	       (    
+	       SELECT generate_series(min(date_trunc('hour',time_stamp)),
+	       max(date_trunc('minute',time_stamp)),'1h') as minute
+	        from test 
+	       ) series 
+	       on t.interval_alias  = series.minute
+	GROUP BY 1,3
+	ORDER BY 1 ASC limit 10;
+	
+----------------------------------------------------------------------------------------------------------------------------------
+
+	SELECT series.minute as interval,
+	  to_timestamp(ceil((extract('epoch' from series.minute) / 300 )) * 300) AT TIME ZONE 'UTC' +('5 minute')::interval
+	 as interval_alias ,coalesce(t.count,0) as count from
+	  (
+	select count(*)
+ count,
+	to_timestamp(ceil((extract('epoch' from time_stamp) / 300 )) * 300)
+	AT TIME ZONE 'UTC' as interval_alias
+	FROM test
+	group by interval_alias
+	) t
+	 RIGHT JOIN 
+	       (    
+	       SELECT generate_series(min(date_trunc('hour',time_stamp)),
+	       max(date_trunc('minute',time_stamp)),'5m') as minute
+	        from test 
+	       ) series 
+	       on series.minute = t.interval_alias 
+	GROUP BY 1,3
+	ORDER BY 1 ASC limit 10;
+  
+  -------------------------------------------------------------------------------
+  
+  SELECT series.minute as interval,
+	  to_timestamp(ceil((extract('epoch' from series.minute) / 300 )) * 300) AT TIME ZONE 'UTC' 
+	 as interval_alias ,coalesce(t.count,0) as count from
+	  (
+	select count(*)
+ count,
+	to_timestamp(floor((extract('epoch' from time_stamp) / 300 )) * 300)
+	AT TIME ZONE 'UTC' as interval_alias,
+	 to_timestamp(floor((extract('epoch' from time_stamp) / 300 )) * 300) AT TIME ZONE 'UTC' +('1 minute')::interval as minute
+	FROM test
+	group by interval_alias
+	) t
+	 RIGHT JOIN 
+	       (    
+	       SELECT generate_series(min(date_trunc('minute',time_stamp)),
+	       max(date_trunc('minute',time_stamp)),'5m') as minute
+	        from test 
+	       ) series 
+	       on series.minute = t.minute 
+	GROUP BY 1,3
+	ORDER BY 1 ASC limit 10;
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+
+	SELECT series.minute as interval,
+	  to_timestamp(ceil((extract('epoch' from series.minute) / 3600 )) * 3600) AT TIME ZONE 'UTC' +('1 hour')::interval
+	 as interval_alias ,coalesce(t.count,0) as count from
+	  (
+		select count(*)
+	 count,
+		to_timestamp(floor((extract('epoch' from time_stamp) / 3600 )) * 3600)
+		AT TIME ZONE 'UTC' as interval_alias
+		FROM test
+		group by interval_alias
+	) t
+	 LEFT JOIN 
+	       (    
+		       SELECT generate_series(min(date_trunc('hour',time_stamp)),
+		       max(date_trunc('minute',time_stamp)),'1h') as minute
+		        from test 
+	       ) series 
+	       on t.interval_alias  = series.minute
+	GROUP BY 1,3
+	ORDER BY 1 ASC limit 10;
+
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+
+SELECT series.minute as interval,
+	  to_timestamp(ceil((extract('epoch' from series.minute) / 3600 )) * 3600) AT TIME ZONE 'UTC' +('1 hour')::interval
+	 as interval_alias ,coalesce(t.count,0) as count from
+	  (
+	select count(*)
+ count,
+	to_timestamp(floor((extract('epoch' from time_stamp) / 3600 )) * 3600)
+	AT TIME ZONE 'UTC' as interval_alias,
+	 to_timestamp(floor((extract('epoch' from time_stamp) / 3600 )) * 3600) AT TIME ZONE 'UTC' +('1 hour')::interval as minute
+	FROM test
+	group by interval_alias
+	) t
+	 RIGHT JOIN 
+	       (    
+	       SELECT generate_series(min(date_trunc('hour',time_stamp)),
+	       max(date_trunc('minute',time_stamp)),'1h') as minute
+	        from test 
+	       ) series 
+	       on series.minute = t.interval_alias 
+	GROUP BY 1,3
+	ORDER BY 1 ASC limit 10;
+	---------------------------------------------------------------
+
+	select count(*)
+ count,
+ to_timestamp(floor((extract('epoch' from time_stamp) / 300 )) * 300) AT TIME ZONE 'UTC' +('1 minute')::interval,
+	to_timestamp(floor((extract('epoch' from time_stamp) / 300 )) * 300)
+		AT TIME ZONE 'UTC' as interval_alias
+	FROM test
+	group by interval_alias
+	ORDER by 3
+	limit 5;
