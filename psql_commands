@@ -2,9 +2,9 @@
 psql
 -------
 
-\timing 		      	// to show the execution time of a query after execution or to hide execution time(by default off).
+\timing 			// to show the execution time of a query after execution or to hide execution time(by default off).
 
-\d 					// to list tables in the database. 
+\d 					// to list tables views sequences all in the database. 
 
 \d table_name 		// to describe table.
 
@@ -24,6 +24,12 @@ psql
 
 \df+	 			// to list all function with additional info.
 
+\dv					// to list all views
+
+\dt 				// to list all tables 
+
+\ds 				// to list all sequence
+
 \c 					// to  connect to another database.
 
 \q 					// to quit from postgres shell.
@@ -35,7 +41,7 @@ psql
 \e 					// to open an editor
 
 \i \path file.sql 	// to run external file
- 
+
 \a 					// to align or un align output format
 
 \! [ command ]		// to run the code as shell command
@@ -50,9 +56,7 @@ psql
 
 \z or \dp 			// to "display privileges"
 
-
-
-
+\o filename			// to print the output in file 
 
 -----------------------------------------------------------------------------------
 
