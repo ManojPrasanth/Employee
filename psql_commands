@@ -58,6 +58,7 @@ psql
 
 \o filename			// to print the output in file 
 
+\watch time_sec // to print the recent output for every time_sec
 -----------------------------------------------------------------------------------
 
 psql -l 															// to list all the databases.
