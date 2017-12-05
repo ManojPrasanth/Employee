@@ -159,4 +159,40 @@ BUFFERS is a 9.0 feature
 • blocks read, and written
 • in the PostgreSQL cache (hit)
 • and outside (read)
+----------------------------------------------------------------------------------------------------------------------
+
+postgres=# explain select * from foo where c1>501 ;
+                          QUERY PLAN                          
+--------------------------------------------------------------
+ Seq Scan on foo  (cost=0.00..41667.00 rows=1999128 width=37)
+   Filter: (c1 > 501)
+(2 rows)
+
+New line: Filter: (c1 > 500)
+• Cost is higher
+• less rows
+• but more work because of the filtering
+• Number of rows is not correct, but good enough
+
+-----------------------------------------------------------------------------------------------
+select relpages*current_setting('seq_page_cost')::float4+reltuples*current_setting('cpu_tuple_cost')::float4+reltuples*current_setting('cpu_operator_cost')::float4 as total_cost from pg_class where relname ='foo';
+ total_cost 
+------------
+      41667
+(1 row)
+
+• The executor
+• reads all the blocks of relation foo
+• filters the rows according to the WHERE clause
+• checks the remaining rows to make sure they are visible
+---------------------------------------------------------------------------------------------------------------------------
+create index on foo(c1);
+CREATE INDEX
+//can index data in table
+
+set enable_seqscan to off;
+// its makes force index search for explain & analyze instead of sequential search , & if table is not indexed then it will go for sequential search
+
+set enable_seqscan to on;
+// it searches based on sequential search only for all tables
 
