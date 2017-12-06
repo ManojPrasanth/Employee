@@ -51,3 +51,31 @@ Automate Logrotation with Cron
 Automate the logrotation process using the cron file /etc/cron.daily/logrotate. The logroatation will be performed daily.
 For automate logrotation the config file must be saved in the  /etc/cron.daily/file , if it needs to be rotated daily.(orelse cron.weekly,cron.hourly,cron.monthly)
 
+--------------------------------------------------------------------------
+#logrotate for last months file
+/var/tmp/*.log
+{	
+	size 0
+	missingok
+	rotate 3
+	compress
+	notifempty
+	dateext
+	dateformat -%Y-%m-%d-%H-%M-%S
+	create 
+	#sharedscripts
+	prerotate
+ 		 k=`date +%Y%m`
+ 		 x=`stat -c '%x' $1 | awk -F '-' '{print $1$2}'`
+ 		 if [ $k  -gt $x ] 
+ 		 	then 
+ 		 		 echo "$1"; 
+ 		 	else
+ 		 	  	echo $1 | grep -v  $1
+ 		 fi
+	endscript
+}
+
+
+
+------------------------------------
