@@ -195,4 +195,108 @@ set enable_seqscan to off;
 
 set enable_seqscan to on;
 // it searches based on sequential search only for all tables
+---------------------------------------------------------------------------------------------------------------------------------
+Adding an index with an opclass
+
+CREATE INDEX ON foo(c2 text_pattern_ops);
+EXPLAIN SELECT * FROM foo WHERE c2 LIKE 'abcd%';
+QUERY PLAN
+­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­
+Bitmap Heap Scan on foo (cost=7.29..57.91
+rows=100 width=37)
+Filter: (c2 ~~ 'abcd%'::text)
+­> Bitmap Index Scan on foo_c2_idx1
+(cost=0.00..7.26 rows=13 width=0)
+Index Cond: ((c2 ~>=~ 'abcd'::text)
+AND (c2 ~<~ 'abce'::text))
+• New kind of nodes: Bitmap Index Scan
+
+Once there is an index with the good operator class, the planner can use the index to make the
+query run faster.
+-----------------------------------------------------------------------------------------------------------------------------
+
+All the major scan nodes
+• Sequential Scan
+  • read all the table in sequential order
+• Index Scan
+  • read the index to filter on the WHERE clause
+  • and the table to filter the “invisible” rows
+• Bitmap Index Scan
+  • the same
+  • but read fully the index, and then the table
+  • much quicker for a bigger number of rows
+• Index Only Scan
+  • for covering indexAll the major scan nodes
+----------------------------------------------------------------------------------------------------------------------------
+ORDER BY clause
+
+DROP INDEX foo_c1_idx;
+EXPLAIN (ANALYZE) SELECT * FROM foo ORDER BY c1;
+QUERY PLAN
+­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­
+Sort
+(cost=172682.84..175182.84 rows=1000000 width=37)
+(actual time=612.793..729.135 rows=1000000 loops=1)
+Sort Key: c1
+Sort Method: external sort Disk: 45952kB
+­> Seq Scan on foo (cost=0.00..18334.00
+rows=1000000 width=37)
+(actual time=0.017..111.068
+rows=1000000 loops=1)
+Total runtime: 772.685 ms
+
+The simpler one (or the one that doesn't imply other objects than the table) is a sort done by the
+CPU when executing the query. This takes CPU time and memory. In this example, it needs so
+much memory that PostgreSQL does a sort on disk. It uses 45MB. As it writes many data on the
+disk, it takes a lot of time. The time used to do the sequential scan (111ms) is far less than the
+time to do the sorting (618ms, result of 729ms-111ms).
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Are we sure it writes on the disk?
+
+EXPLAIN (ANALYZE,BUFFERS) SELECT * FROM foo ORDER BY c1;
+QUERY PLAN
+­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­
+Sort
+(cost=172682.84..175182.84 rows=1000000 width=37)
+(actual time=632.796..756.958 rows=1000000 loops=1)
+Sort Key: c1
+Sort Method: external sort Disk: 45952kB
+Buffers: shared hit=3910 read=4424,
+temp read=5744 written=5744
+­> Seq Scan on foo (cost=0.00..18334.00
+rows=1000000 width=37)
+(actual time=0.134..110.617
+rows=1000000 loops=1)
+Buffers: shared hit=3910 read=4424
+Total runtime: 811.308 ms
+
+To make sure PostgreSQL really writes to disk the temporary data for the sort, we can use the
+BUFFERS option of EXPLAIN. The interesting line here is “temp read=5744 written=5744”.
+PostgreSQL wrote 5744 of temporary data, and read it. 5744 blocks of 8KB are the 45MB we were
+expecting.
+-------------------------------------------------------------------------------------------------------------------------------
+Let's bring more mem to the sort
+
+SET work_mem TO '200MB';
+EXPLAIN (ANALYZE) SELECT * FROM foo ORDER BY c1;
+QUERY PLAN
+­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­­
+Sort
+(cost=117991.84..120491.84 rows=1000000 width=37)
+(actual time=552.401..598.984 rows=1000000 loops=1)
+Sort Key: c1
+Sort Method: quicksort Memory: 102702kB
+­> Seq Scan on foo (cost=0.00..18334.00
+rows=1000000 width=37)
+(actual time=0.014..102.907
+rows=1000000 loops=1)
+Total runtime: 637.525 ms
+
+PostgreSQL can also do the sort in memory, but we need to give it enough memory to use. You
+can do this through the work_mem parameter. By default, it's at 1MB. Here, we set it to 200MB,
+and rexecute the query. PostgreSQL switches to a quicksort in-memory algorithm and that's
+quicker (and it's even way quicker in 9.2, thanks to Peter Geoghegan and its use of an optimized
+quicksort).
+  
 
