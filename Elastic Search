@@ -60,6 +60,12 @@ open kibana
 	Enter credentials…
 		Username: elastic  Password: <pwd>
 
+To set passwords manually
+	bin/x-pack/setup-passwords interactive
+
+To set passwords auto
+	bin/x-pack/setup-passwords auto
+
 
 POST /library/books/_search
 {
