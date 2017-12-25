@@ -6,6 +6,61 @@ and many other languages.[2] Elasticsearch is the most popular enterprise search
 
 Elasticsearch is developed alongside a data-collection and log-parsing engine called Logstash, and an analytics and visualisation platform called Kibana. The three products are designed
 for use as an integrated solution, referred to as the "Elastic Stack" (formerly the "ELK stack").
+
+Install steps for Elasticsearch
+
+Terminal Command:
+	wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.1.1.tar.gz
+	wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.1.1.tar.gz.sha512
+	shasum -a 512 -c elasticsearch-6.1.1.tar.gz.sha512 
+	tar -xzf elasticsearch-6.1.1.tar.gz
+	cd elasticsearch-6.1.1/
+
+To download elasticsearch tar.qz doc
+	https://www.elastic.co/start
+
+to start elasticsearch
+	./bin/elasticsearch
+	./bin/elasticsearch -d -p pid (to run with processid)
+
+open elasticsearch
+	localhost:9200
+
+to kill
+kill `cat pid` (running with pid)
+
+To download kibana tar.qz doc
+	https://www.elastic.co/start
+
+kibana-download tar.gz file
+	tar -xzf kibana-6.1.1-linux-x86_64.tar.gz 
+
+
+Install X-Pack into Elasticsearch
+	In Elasticsearch install dir, run…
+		bin/elasticsearch-plugin install x-pack
+	Start Elasticsearch...
+		bin/elasticsearch
+	Generate default passwords...
+		bin/x-pack/setup-passwords auto
+
+Install X-Pack into Kibana
+	In Kibana install dir, run…
+		bin/kibana-plugin install x-pack
+	Add credentials to the kibana.yml file
+		elasticsearch.username: "kibana"
+		elasticsearch.password:  "<pwd>"
+
+To start kibana
+	bin/kibana
+
+open kibana
+	Open your browser…
+		http://localhost:5601
+	Enter credentials…
+		Username: elastic  Password: <pwd>
+
+
 POST /library/books/_search
 {
    "query" : {
