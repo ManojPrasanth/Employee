@@ -35,6 +35,28 @@ To download kibana tar.qz doc
 kibana-download tar.gz file
 	tar -xzf kibana-6.1.1-linux-x86_64.tar.gz 
 
+Install ElasticSearch with debian package (run as daemon)
+	wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.1.1.deb
+	wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.1.1.deb.sha512
+	shasum -a 512 -c elasticsearch-6.1.1.deb.sha512 
+	sudo dpkg -i elasticsearch-6.1.1.deb
+	
+Use the update-rc.d command to configure Elasticsearch to start automatically when the system boots up:
+	sudo update-rc.d elasticsearch defaults 95 10
+
+Elasticsearch can be started and stopped using the service command:
+	sudo -i service elasticsearch start
+	sudo -i service elasticsearch stop
+
+If Elasticsearch fails to start for any reason, it will print the reason for failure to STDOUT. Log files can be found in /var/log/elasticsearch/.
+
+To configure Elasticsearch to start automatically when the system boots up, run the following commands:
+	sudo /bin/systemctl daemon-reload
+	sudo /bin/systemctl enable elasticsearch.service
+Elasticsearch can be started and stopped as follows:
+	sudo systemctl start elasticsearch.service
+	sudo systemctl stop elasticsearch.service
+
 
 Install X-Pack into Elasticsearch
 	In Elasticsearch install dir, run…
