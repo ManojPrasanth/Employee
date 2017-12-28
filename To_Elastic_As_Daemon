@@ -16,3 +16,7 @@ To start and stop the service, you can run the commands :
 
 sudo  service elasticsearch start
 sudo  service elasticsearch stop
+
+
+
+https://stackoverflow.com/questions/32290304/how-to-keep-elastic-search-running-on-linux-server
