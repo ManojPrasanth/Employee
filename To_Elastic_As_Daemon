@@ -1,0 +1,18 @@
+The issue you have is that elasticsearch is not being started as a daemon (server). Instead you starting it as you would a normal program. Therefore when you stop your SSH session, the program stops running.
+
+In order to get elasticsearch to start when the server itself is rebooted, you need to add elasticsearch to the server startup.
+
+You didn't say which operating system you are running on the server. Let's assume it's a Debian (eg Ubuntu) system), you must create a file that you can place in the directory /etc/init.d.
+
+I have copied the file from my own server below. You may already have it. Look for the file /etc/init.d/elasticsearch
+
+$ more /etc/init.d/elasticsearch 
+Once you have the file you can run the command
+
+sudo update-rc.d elasticsearch defaults 95 10
+This will "install" elasticsearch as a service.
+
+To start and stop the service, you can run the commands :
+
+sudo  service elasticsearch start
+sudo  service elasticsearch stop
