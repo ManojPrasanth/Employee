@@ -1,0 +1,181 @@
+/home/manojprasanths/Downloads/portal_etl-master/bin/run_on_demand_solr_threaded.sh -j /home/manojprasanths/Documents/rpx/pats_dev.properties -s 1 -e 1000 -c 500 -t 2 -l pats_dev_es >> /tmp/pats_es_dev_update_$(date +%Y-%m-%d).log
+
+
+/home/manojprasanths/Downloads/portal_etl-master/bin/run_on_demand_solr_threaded.sh -j /home/manojprasanths/Documents/rpx/pats_dev.properties -s 500000 -e 600000 -c 5000 -t 2 -l pats_dev_es >> /tmp/pats_es_dev_update_$(date +%Y-%m-%d).log
+
+
+./run_on_demand_solr_threaded.sh -f job_solr_sync_on_demand_no_delete.kjb -j pats_dev.properties -s 1 -e 1000 -c 500 -t 2
+
+
+/home/manojprasanths/Downloads/portal_etl-master/bin/run_on_demand_solr_threaded.sh -j /home/manojprasanths/Documents/rpx/pats_dev.properties -s 1 -e 100000 -c 5000 -t 10 -l pats_dev_es >> /tmp/pats_es_dev_update_$(date +%Y-%m-%d).log
+
+
+/home/msivalingam/portal_etl_master
+/home/manojprasanths/Downloads/portal_etl-master/bin/run_on_demand_solr_threaded_ES.sh
+ssh msivalingam@dev-pth
+
+
+scp /home/manojprasanths/Documents/rpx/pats_dev_ES.properties msivalingam@dev-pth:/home/msivalingam/portal_etl_master/properties
+
+scp /home/manojprasanths/Downloads/portal_etl-master/ES/job/*ES.kjb msivalingam@dev-pth:/home/msivalingam/portal_etl_master/pdi_job
+
+
+/home/msivalingam/portal_etl_master/shell_files/run_on_demand_solr_threaded_ES.sh -j /home/msivalingam/portal_etl_master/properties/pats_dev_ES.properties -s 500000 -e 600000 -c 500 -t 3 -l pats_dev_es >> /home/msivalingam/portal_etl_master/log/pats_es_dev_update_$(date +%Y-%m-%d).log
+
+
+/opt/pentaho/kettle_5.0/kitchen.sh -file=/opt/pentaho/repos/wordpress_etl/current/pdi/job/job_run_wordpress_ES.kjb -param:job_config=/opt/pentaho/repos/wordpress_etl/config/${PROPERTY_FILE} -param:run_id=${job_control_run_id} -level:Minimal>> /tmp/wordpress_etl_${PROPERTY_FILE}.log 2>&1
+
+data_download solr
+	/opt/pentaho/repos/portal_etl/current/bin/run_on_demand_solr_threaded.sh -j /opt/pentaho/repos/portal_etl/config/data_download_dev.properties -s <start_id> -e <end_id> -c 5000 -t 2 -l data_download_dev >> /tmp/data_download_dev_update_$(date +%Y-%m-%d).log
+
+	/opt/pentaho/repos/portal_etl/current/bin/run_on_demand_solr_threaded.sh -j /opt/pentaho/repos/portal_etl/config/data_download_dev.properties -s 3 -e 11256596 -c 5000 -t 2 -l data_download_dev >> /tmp/data_download_dev_update_$(date +%Y-%m-%d).log
+	-[ RECORD 1 ]---
+count | 2142880
+min   | 3
+max   | 11256596
+
+
+
+PortalPat_xml
+	/opt/pentaho/repos/portal_etl/current/bin/run_on_demand_solr_threaded.sh -j /opt/pentaho/repos/portal_etl/config/pats_dev.properties -s 500001 -e 1500082 -c 5000 -t 2 -l pats_dev >> /tmp/pats_dev_update_$(date +%Y-%m-%d).log	
+
+
+PortalPat_xml-node2
+	/opt/pentaho/repos/portal_etl/current/bin/run_on_demand_solr_threaded.sh -j /opt/pentaho/repos/portal_etl/current/pats_stage_xml.properties -s 500001 -e 1000000 -c 5000 -t 2 -l pats_stage_500k >> /tmp/pats_stage_update500k_$(date +%Y-%m-%d).log
+
+PortalPat_json-node2
+	/opt/pentaho/repos/portal_etl/current/bin/run_on_demand_solr_threaded_json.sh -j /opt/pentaho/repos/portal_etl/current/pats_stage_json.properties -s 1 -e 554 -c 100 -t 2 -l pats_stage_json500k >> /tmp/pats_stage_update_json_$(date +%Y-%m-%d).log	
+
+
+Prod_PortalPat_json_cmd
+	/opt/pentaho/repos/portal_etl/current/bin/run_on_demand_solr_threaded_json.sh -j /opt/pentaho/repos/portal_etl/config/pats_stage_json.properties -s 999919 -e 1500000 -c 5000 -t 2 -l pats_stage_json500k >> /tmp/pats_stage_update_json500k_$(date +%Y-%m-%d).log
+
+Prod_PortalPat_xml_cmd
+	/opt/pentaho/repos/portal_etl/current/bin/run_on_demand_solr_threaded_xml.sh -j /opt/pentaho/repos/portal_etl/config/pats_stage_xml.properties -s 999919 -e 1500000 -c 5000 -t 2 -l pats_stage_xml100k >> /tmp/pats_stage_update_xml100k_$(date +%Y-%m-%d).log
+
+
+
+MISC:
+	/opt/pentaho/kettle_5.0/kitchen.sh -file=/opt/pentaho/repos/wordpress_etl/current/pdi/job/job_run_wordpress_ES.kjb -param:job_config=/opt/pentaho/repos/wordpress_etl/config/dev.properties -param:run_id=0 -level:Minimal>> /tmp/wordpress_etl_dev_ES.log 2>&1
+
+PortalPat_Json
+	/opt/pentaho/repos/portal_etl/current/bin/run_on_demand_solr_threaded_ES.sh -j /opt/pentaho/repos/portal_etl/config/pats_dev_ES.properties -s 1 -e 1000 -c 500 -t 3 -l pats_dev_es >> /tmp/pats_es_dev_update_$(date +%Y-%m-%d).log	
+
+Litigation
+	/opt/pentaho/repos/portal_etl/current/bin/run_on_demand_solr_threaded_ES_lits.sh -j /opt/pentaho/repos/portal_etl/config/lits_dev.properties -s 1 -e 505356 -c 5000 -t 2 -l lits_dev_es >> /tmp/lits_es_dev_update_$(date +%Y-%m-%d).log
+
+Entity
+	/opt/pentaho/repos/portal_etl/current/bin/run_on_demand_solr_threaded_ES_ents.sh -j /opt/pentaho/repos/portal_etl/config/ents_dev.properties -s 50586 -e 232000 -c 5000 -t 2 -l ents_dev_es >> /tmp/ents_es_dev_update_$(date +%Y-%m-%d).log
+
+
+//solr new collection create cmd
+http://dev-solr-node2:8081/solr/admin/collections?action=CREATE&name=patent_json&numShards=1&replicationFactor=1&createNodeSet=dev-solr-node2:8081_solr&collection.configName=patent_conf
+
+//solr old collection delete cmd
+http://dev-solr-node2:8081/solr/admin/collections?action=DELETE&name=patent_json
+
+//solr update changed config file cmd
+/opt/rpx/solr/server/scripts/cloud-scripts/zkcli.sh -zkhost stage-solr-node1:2181,stage-solr-node2:2181,stage-solr-node3:2181 -cmd upconfig -confname patent_conf -confdir /var/solr/collections/conf/patent_conf
+
+//to down_config from solr (DOWNLOAD)
+	/opt/rpx/solr/server/scripts/cloud-scripts/zkcli.sh -zkhost dev-solr-node2:3181 -cmd downconfig -confname patent_conf -confdir /tmp/
+
+
+// to see solr log status
+tail -f /var/solr/logs/solr.log
+
+// to see collections data memory
+root@dvpoe-sch40a:/mnt/solrcloud1/portal_patent# du -sh *
+
+// to check solr_zookeeper status/start/stop (./zkServer.sh status)
+/opt/rpx/zookeeper/bin/zkServer.sh status (or) /opt/rpx/zookeeper-3.4.9/bin/zkServer.sh status
+/opt/rpx/zookeeper/bin/zkServer.sh stop
+/opt/rpx/zookeeper/bin/zkServer.sh start
+
+// SolrCore Initialization Failures error
+	Data files missing in data store directory
+	to find data store directory see <dataDir> in solrconfig.xml
+
+//Error processing the request. CoreContainer is either not initialized or shutting down 
+	Zookeeper is not running
+	check zookeeper status at ./zkServer.sh status
+
+
+//git pull and push commands
+	git remote set-url origin https://github.com/rpx/wordpress_etl
+	git remote -v
+	git init
+	git remote add origin https://github.com/rpx/wordpress_etl
+	git status
+	git pull origin master
+	git remote -v
+
+//to copy db table to csv file
+	\COPY (SELECT * FROM test_suite.unique_solr_queries) TO '/home/manojprasanths/CSV-EXPORT_FILE.csv' WITH CSV DELIMITER ',';
+
+//to copy from csv to table
+	COPY sample_table FROM 'C:\tmp\sample_data.csv' CSV HEADER DELIMITER ',' ;
+//To import this CSV file into the persons table, you use COPY statement as follows
+	eg: \copy test_suite.unique_elastic_queries(solr_id,collection,query) from '/home/manojprasanths/solrToEsQuery-Es.csv' CSV HEADER DELIMITER ',' ;
+
+
+//for checking mount(mnt) pt
+df -h 
+
+// to see last shutdown time
+last -x | grep shutdown
+
+//to see wen system started
+uptime
+
+// to find type of machine
+curl http://169.254.169.254/latest/meta-data/instance-type
+
+//to run some aplication on system startup 			//The auto-generated configuration file for upstart systems is /etc/init/logstash.conf.
+sudo systemctl stop <appliction-name>.service		ex: sudo systemctl stop solr.service //you can start up <application-name>
+sudo initctl start <appliction-name>			//Running <application-name> by Using Upstart
+sudo /etc/init.d/<appliction-name> start					//Running <application-name> by Using SysVedit	
+
+
+// create index command
+dev-coredb : create index on test_suite.unique_solr_queries using gist(query public.gist_trgm_ops);
+CREATE INDEX
+// create index for int column
+CREATE INDEX on ldc.lit_docs_court_orders USING gin (judge_alias_ids gin__int_ops);
+
+
+//eg for audit tables
+\df+ core_audit.lit_types_aud_insert_trigger
+\d core_audit.lit_types_aud
+
+//func for creating audit table
+core_audit.monthly_audit_partition_update()
+
+//unique solr queries job command
+sh /opt/pentaho/kettle_5.1/kitchen.sh /file="/opt/pentaho/repos/unique_query_solr/find_or_create_unique_query.kjb" >> /tmp/find_or_create_unique_query.log
+
+//to see size of a table
+SELECT pg_size_pretty( pg_total_relation_size('test_suite.solr_queries_log') );
+
+Downconfig
+
+/opt/rpx/solr/server/scripts/cloud-scripts/zkcli.sh -zkhost prod-solr-node1:2181 -cmd downconfig -confname data_download_conf -confdir /tmp/
+/opt/rpx/solr/server/scripts/cloud-scripts/zkcli.sh -zkhost dev-solr-node2:3181 -cmd downconfig -confname patent_conf -confdir 
+
+Upconfig
+
+/opt/rpx/solr/server/scripts/cloud-scripts/zkcli.sh -zkhost dev-solr-node1:2181 -cmd upconfig -confname data_download_conf -confdir /tmp/data_download_conf
+/opt/rpx/solr/server/scripts/cloud-scripts/zkcli.sh -zkhost stage-solr-node1:2181,stage-solr-node2:2181,stage-solr-node3:2181 -cmd upconfig -confname patent_conf -confdir /var/solr/collections/conf/patent_conf
+
+
+Create Collection
+
+http://dev-solr-node2:8080/solr/admin/collections?action=CREATE&name=litigation_test&numShards=1&replicationFactor=2&createNodeSet=dev-solr-node2:8080_solr&collection.configName=litigation_conf_test 
+
+
+DELETE URL - http://dev-solr-node2:8080/solr/admin/collections?action=DELETE&name=litigation_test
+
+ http://dev-solr-cloud:8080/solr/litigation_test/update?commit=true
+
+data_download_coredb
+cTt2GbDDxl
