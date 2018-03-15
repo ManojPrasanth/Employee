@@ -1,0 +1,322 @@
+// for sql queries plugins
+
+https://github.com/NLPchina/elasticsearch-sql
+Ex:
+http://localhost:9200/_sql?sql=select pat_id_ls from patent p join patent1 p1 on p.pat_id_ls=p1.pat_id_ls
+
+
+//to get details about indices
+GET _cat/indices?v
+
+//direct search query example
+GET /patent/_search?filter_path=hits.hits._source.id&size=1
+
+//to print all data from 2 or multiple indices
+GET /twitter,users/tweet,user/_search?q=*:*
+
+//terminate_after to 1 to indicate that the query execution can be terminated whenever the first matching document was found (per shard)
+GET /_search?q=class_name:PortalPat&size=0&terminate_after=1
+
+//to get data from multiple indices with particular query condition
+GET /patent,patent1/_search?q=class_name:*&q="PortalPat 3"
+
+//to give write access allow at time of memory shortage(wen memory shortage is there it will assign read only access to old indices)
+ PUT your_index_name/_settings
+    {
+    "index": {
+    "blocks": {
+    "read_only_allow_delete": "false"
+    }
+    }
+    }
+
+Misc data has been indexed in elasticsearch
+_index : rpx
+_type : misc
+
+http://dev-solr-node2:5650
+
+
+
+http://dev-solr-node2:9250/rpx/misc/_search?q=_id:FeedArticle%208377
+http://dev-solr-node2:9250/rpx/misc/_search?q=*&sort=_id:asc&pretty
+http://dev-solr-node2:9250/rpx/misc/_search?q=*&pretty
+
+
+
+http://dev-solr-node2:9250/rpx/misc/_bulk?pretty
+
+
+GET /patent/_search
+{
+  "query": {
+    "match": {
+      "id": "PortalPat 4"
+    }
+  }
+}
+
+// facet.mincount and facet.limit
+
+GET  entity/_search
+{
+ "size": 0
+ , "aggs": {
+   "NAME": {
+     "terms": {
+       "field": "class_name.keyword",
+       "size": 10
+       , "min_doc_count": 1
+     }
+   }
+ }
+}
+
+//to find min,max,count, sum of a field
+
+GET entity/_search
+{
+  "size": 0, 
+  "query": {
+    "match_all": {}
+  },
+  "aggs": {
+    "NAME": {
+      "stats": {
+        "field": "ent_lit_count_is"
+      }
+    }
+  }
+}
+
+
+// Facet.field similar
+
+GET entity/_search
+{
+  "size": 0, 
+  "sort": [
+    {
+      "campaigns_cnt": {
+        "order": "desc"
+      }
+    }
+  ], 
+  "query": {
+    "match_all": {}
+  },
+  "aggs": {
+    "NAME": {
+      "terms": {
+        "field": "category",
+        "size": 20
+      }
+    }
+  }
+}
+
+
+GET /patent/_search
+{
+  "_source": "id"
+}
+
+
+
+//commit time
+
+PUT /_settings
+{
+  "refresh_interval": "60s"
+}
+
+
+GET /_settings
+
+
+PUT /test/test/6?refresh
+{"test": "test"}
+
+PUT /test/test/2?refresh=true
+{"test": "test"}
+
+PUT /test/test/3
+{"test": "test"}
+
+PUT /test/test/9?refresh=false
+{"test": "test"}
+
+PUT /test/test/10?refresh=wait_for
+{"test": "test"}
+
+PUT /test/test/11
+{"test": "test"}
+
+GET patent/_search
+{
+  "query": {
+    "match": {
+      "_id": "PortalPat 4"
+    }
+  }
+}
+
+
+
+
+
+PUT /library/books
+{
+  "analyzer"
+}
+
+{
+  "_source": "_childDocuments_.analyst_port_patent_age", 
+  "query": {
+    "bool": {
+      "must": [
+        {
+         "match_all": {}
+        }
+      ]
+    }
+  }
+ 
+}
+
+GET /_cache/clear
+
+
+//greater than ,less than
+
+GET /patent/_search
+{
+  "_source": "_childDocuments_.analyst_port_patent_age", 
+  "query": {
+    "range": {
+      "_childDocuments_.analyst_port_patent_age": {
+        "gte": 11,
+        "lte": 13
+      }
+    }
+  }
+}
+
+
+// To view version in doc search
+
+GET /patent/_search
+{
+  "version": true, 
+  "query": {
+    "match": {
+      "_id": "PortalPat 4"
+    }
+  }
+}
+
+
+// dynamic mapping fields 
+
+PUT my_index
+{
+  "mappings": {
+    "my_type": {
+      "dynamic_templates": [
+        {
+          "longs_as_strings": {
+            "match_mapping_type": "string",
+            "match":   "long_*",
+            "unmatch": "*_text",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+
+// To see copy fields in a collection from solr
+
+http://dev-solr-cloud:8080/solr/patent/schema/copyfields
+
+
+
+//copy field
+
+PUT my_index
+{
+  "mappings": {
+    "my_type": {
+      "properties": {
+        "first_name": {
+          "type": "text",
+          "copy_to": "full_name" 
+        },
+        "last_name": {
+          "type": "text",
+          "copy_to": "full_name" 
+        },
+        "full_name": {
+          "type": "text"
+          , "store": true
+        }
+      }
+    }
+  }
+}
+
+DELETE my_index
+
+PUT my_index/my_type/1
+{
+  "first_name": "John",
+  "last_name": "Smith"
+}
+
+GET my_index/_search
+{
+  "_source": "full_name", 
+  "stored_fields": ["full_name"], 
+  "query": {
+    "match": {
+      "full_name": "john"
+    }
+  }
+}
+
+
+//multiple aggregation cmds with and
+GET /patent/_search
+{
+  "size": 0, 
+  "aggs": {
+    "NAME": {
+      "aggs": {
+        "NAME": {
+          "terms": {
+            "field": "class_name.keyword",
+            "include": "PortalPat", 
+            "size": 10
+          }
+        }
+      },
+      "terms": {
+        "field": "id.keyword",
+        "include": "PortalPat 3", 
+        "size": 10
+      }
+    },
+    "NAME1" : {
+      "terms": {
+        "field": "class_name.keyword",
+        "size": 10
+      }
+    }
+  }
+}
+
+
